@@ -24,7 +24,7 @@ const creatEditShop=async(req,res)=>{
             shop=await Shop.findOneAndUpdate( { _id: shop._id },{name,image,city,state,address}, {new:true});
         }    
         await shop.populate("owner");
-        return res.status(201).jscon({
+        return res.status(201).json({
             success:true,
             message:"Shop created successfully",
             shop
@@ -39,6 +39,29 @@ const creatEditShop=async(req,res)=>{
 
 }
 
+const getMyShop=async(req,res)=>{
+    try {
+        const shop=await Shop.findOne({owner:req.userId}).populate("owner items");
+        if(!shop){
+            return res.status(404).json({
+                success:false,
+                message:"Shop not found"
+            })
+        }
+        return res.status(200).json({
+            success:true,
+            message:"Shop found",
+            shop
+        })
+    } catch (error) {
+        res.status(500).json({
+            success:false,
+            message:"Error in fetching shop",
+            error:error.message
+        })
+    }
+}
 
 
-module.exports={creatEditShop};
+
+module.exports={creatEditShop,getMyShop};
