@@ -1,0 +1,21 @@
+const nodemailer=require("nodemailer")
+
+const transport=nodemailer.createTransport({
+service:"Gmail",
+  port: 465,
+  secure: true, // Use true for port 465, false for port 587
+  auth: {
+    user: process.env.MAIL_ID,
+    pass: process.env.MAIL_PASS,}
+})
+
+const sendOtpEmail=async ({to,otp,sub})=>{
+    await transport.sendMail({
+        from:process.env.MAIL_ID,
+        to,
+        subject:sub,
+        html:`<p>Your otp for password reset is <b>${otp}</b>. it expires in 5 minutes</p>`
+    })
+}
+
+module.exports=sendOtpEmail
