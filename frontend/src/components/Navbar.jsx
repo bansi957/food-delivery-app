@@ -139,38 +139,41 @@ function NavBar() {
         }
 
       
-          
-        <div
-          className="w-10 h-10 rounded-full bg-[#ff4d2d] text-white shadow-xl flex items-center justify-center font-semibold cursor-pointer"
-          onClick={() => setShowInfo((prev) => !prev)}
-        >
-          {userData?.user?.fullName.slice(0, 1).toUpperCase() || "U"}
-        </div>
-        {showInfo && (
-          <div className="fixed top-20 right-2.5 md:right-[10%] lg:right-[20%] w-44 bg-white shadow-2xl rounded-lg p-3 flex flex-col gap-3 z-9999 ">
-            <div className="font-semibold text-base">
-              {userData?.user?.fullName || "User"}
-            </div>
-            {userData.user.role=="user"?
-            <div className="text-[#ff4d2d] md:hidden font-semibold cursor-pointer">
-              {" "}
-              My Orders
-            </div>
-            :
-            <div className="text-[#ff4d2d] md:hidden font-semibold cursor-pointer">
-              {" "}
-              Pending Orders
-            </div>}
+       <div className="relative">
+  {/* Avatar */}
+  <div
+    className="w-10 h-10 rounded-full bg-[#ff4d2d] text-white shadow-xl flex items-center justify-center font-semibold cursor-pointer"
+    onClick={() => setShowInfo((prev) => !prev)}
+  >
+    {userData?.user?.fullName?.slice(0, 1).toUpperCase() || "U"}
+  </div>
 
-            <div
-              className="text-[#ff4d2d] font-semibold cursor-pointer"
-              onClick={handleLogout}
-            >
-              {" "}
-              Log Out
-            </div>
-          </div>
-        )}
+  {/* Dropdown */}
+  {showInfo && (
+    <div className="absolute top-12 right-0 w-44 bg-white shadow-2xl rounded-lg p-3 flex flex-col gap-3 z-50">
+      <div className="font-semibold text-base">
+        {userData?.user?.fullName || "User"}
+      </div>
+
+      {userData?.user?.role === "user" ? (
+        <div className="text-[#ff4d2d] md:hidden font-semibold cursor-pointer">
+          My Orders
+        </div>
+      ) : (
+        <div className="text-[#ff4d2d] md:hidden font-semibold cursor-pointer">
+          {/* Pending Orders */}
+        </div>
+      )}
+
+      <div
+        className="text-[#ff4d2d] font-semibold cursor-pointer"
+        onClick={handleLogout}
+      >
+        Log Out
+      </div>
+    </div>
+  )}
+</div>
       </div>
     </div>
   );

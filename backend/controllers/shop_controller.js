@@ -23,10 +23,8 @@ const creatEditShop=async(req,res)=>{
         else{
             shop=await Shop.findOneAndUpdate( { _id: shop._id },{name,image,city,state,address}, {new:true});
         }    
-        await shop.populate("owner");
+        await shop.populate("owner items");
         return res.status(201).json({
-            success:true,
-            message:"Shop created successfully",
             shop
         })
     } catch (error) {
@@ -49,8 +47,6 @@ const getMyShop=async(req,res)=>{
             })
         }
         return res.status(200).json({
-            success:true,
-            message:"Shop found",
             shop
         })
     } catch (error) {
