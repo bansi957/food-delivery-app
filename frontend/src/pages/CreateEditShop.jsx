@@ -138,7 +138,7 @@ function CreateEditShop() {
             />
           </div>
 
-          <button type="submit" className="w-full bg-[#ff4d2d] text-white px-6 py-3 rounded-lg font-semibold shadow-md hover:bg-orange-600  hover:shadow-lg transition-all cursor-pointer duration-200">
+          <button type="submit"  disabled={loading} className="w-full bg-[#ff4d2d] text-white px-6 py-3 rounded-lg font-semibold shadow-md hover:bg-orange-600  hover:shadow-lg transition-all cursor-pointer duration-200">
             {loading ? <ClipLoader size={20} color='white'/> : "Save"}
           </button>
         </form>

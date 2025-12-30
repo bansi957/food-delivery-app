@@ -49,5 +49,11 @@ const itemSchema = new mongoose.Schema({
     enum: ["Veg", "Non-Veg"],
     required: true,
   },
+
+  rating:{
+    average:{type:Number,default:0},
+    count:{type:Number,default:0}
+
+  }
 }, { timestamps: true });
 module.exports = mongoose.model("Item", itemSchema);

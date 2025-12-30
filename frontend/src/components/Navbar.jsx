@@ -24,7 +24,7 @@ function NavBar() {
       const result = await axios.get(`${serverUrl}/api/auth/signout`, {
         withCredentials: true,
       });
-      console.log(result);
+
       dispatch(setUserData(null));
     } catch (error) {
       console.log(error);
@@ -98,14 +98,14 @@ function NavBar() {
           {userData.user.role == "owner" ? <>
           {myShopData && <>
            <button
-            className=" md:flex hidden  items-center gap-1 p-2 cursor-pointer rounded-full bg-[#ff4d2d]/10 text-[#ff4d2d] "
+            onClick={()=>navigate("/add-food")} className=" md:flex hidden  items-center gap-1 p-2 cursor-pointer rounded-full bg-[#ff4d2d]/10 text-[#ff4d2d] "
           >
            <FaPlus size={20} />
            <span className="ml-2"> Add Food Item</span>
           </button>
 
           <button
-            className="md:hidden flex items-center  p-2 cursor-pointer rounded-full bg-[#ff4d2d]/10 text-[#ff4d2d] "
+            onClick={()=>navigate("/add-food")} className=" md:hidden flex items-center  p-2 cursor-pointer rounded-full bg-[#ff4d2d]/10 text-[#ff4d2d] "
           >
            <FaPlus size={20} />
           
@@ -155,15 +155,11 @@ function NavBar() {
         {userData?.user?.fullName || "User"}
       </div>
 
-      {userData?.user?.role === "user" ? (
+      {userData?.user?.role === "user" &&
         <div className="text-[#ff4d2d] md:hidden font-semibold cursor-pointer">
           My Orders
         </div>
-      ) : (
-        <div className="text-[#ff4d2d] md:hidden font-semibold cursor-pointer">
-          {/* Pending Orders */}
-        </div>
-      )}
+}
 
       <div
         className="text-[#ff4d2d] font-semibold cursor-pointer"

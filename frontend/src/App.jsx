@@ -12,8 +12,10 @@ import useGetMyShop from './hooks/useGetMyShop'
 import CreateEditShop from './pages/createEditShop'
 import AddItems from './pages/AddItems'
 import EditItem from './pages/EditItem'
+import useGetShopByCity from './hooks/useGetShopByCity'
 function App() {
   useGetCurrentuser()
+  useGetShopByCity();
   useGetCity()
   useGetMyShop()
   const {userData}=useSelector(state=>state.user)

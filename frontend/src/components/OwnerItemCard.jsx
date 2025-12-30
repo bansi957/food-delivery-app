@@ -1,13 +1,28 @@
+import axios from 'axios'
 import React from 'react'
 import { FaTrashAlt } from 'react-icons/fa'
 import { FaPen } from 'react-icons/fa6'
 import { useNavigate } from 'react-router-dom'
+import { serverUrl } from '../App'
+import { useDispatch } from 'react-redux'
+import { setMyShopData } from '../redux/ownerSlice'
+
 
 function OwnerItemCard({data}) {
     const navigate=useNavigate()
+    const dispatch=useDispatch()
+    const handleDelete=async ()=>{
+        try {
+            const result=await axios.get(`${serverUrl}/api/item/delete/${data._id}`,{withCredentials:true})
+            dispatch(setMyShopData(result.data.shop))
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
   return (
     <div className='flex bg-white rounded-lg shadow-md overflow-hidden border border-[#ff4d2d] w-full max-w-2xl'>
-        <div className="w-36 h-full shrink-0 bg-gray-50">
+        <div className="w-36 h-36 shrink-0 bg-gray-50">
             <img src={data.image} alt="" className='w-full object-cover h-full' />
         </div>
         <div className='flex flex-col justify-between p-3 flex-1'>
@@ -20,11 +35,11 @@ function OwnerItemCard({data}) {
             <div className='flex justify-between items-center'>
                 <div className='font-bold text-lg text-[#ff4d2d]'>₹{data.price}</div>
                 <div className='flex items-center gap-2' >
-                        <div className='p-2 cursor-pointer rounded-full hover:bg-[#ff4d2d]/10 text-[#ff4d2d]'>
-                    <FaPen size={16} onClick={()=>navigate(`/edit-food/${data._id}`)}/>
+                        <div  onClick={()=>navigate(`/edit-food/${data._id}`)} className='p-2 cursor-pointer rounded-full hover:bg-[#ff4d2d]/10 text-[#ff4d2d]'>
+                    <FaPen size={16}/>
                     
                 </div>
-                <div className='p-2 cursor-pointer rounded-full hover:bg-[#ff4d2d]/10 text-[#ff4d2d]'>
+                <div  onClick={handleDelete} className='p-2 cursor-pointer rounded-full hover:bg-[#ff4d2d]/10 text-[#ff4d2d]'>
                      <FaTrashAlt size={16} />
                     
                 </div>
