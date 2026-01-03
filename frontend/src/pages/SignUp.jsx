@@ -230,7 +230,7 @@ function SignUp() {
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-1/2 -translate-y-1/2"
+                className=" cursor-pointer absolute right-3 top-1/2 -translate-y-1/2"
               >
                 {showPassword ?  <FaRegEyeSlash/>: <FaRegEye />}
               </button>

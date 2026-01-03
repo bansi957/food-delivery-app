@@ -15,7 +15,7 @@ function NavBar() {
   const {myShopData}=useSelector((state)=>state.owner)
   const [showInfo, setShowInfo] = useState(false);
   const [showSearch, setShowSearch] = useState(false);
-  const { userData } = useSelector((state) => state.user);
+  const { userData,cartItems } = useSelector((state) => state.user);
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const handleLogout = async () => {
@@ -128,9 +128,9 @@ function NavBar() {
          
 
           </>
-          :<><div className=" relative cursor-pointer">
+          :<><div onClick={()=>navigate("/cart")} className=" relative cursor-pointer">
             <FiShoppingCart size={25} className="text-[#ff4d2d]" />
-            <span className="absolute -right-2 -top-3 text-[#ff4d2d]"> 0</span>
+            <span className="absolute -right-2 -top-3 text-[#ff4d2d]"> {cartItems.length}</span>
           </div>
     
         <button className="hidden md:block px-3 py-1 rounded-lg bg-[#ff4d2d]/10 text-[#ff4d2d] text-sm font-medium">

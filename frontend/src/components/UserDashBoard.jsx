@@ -36,13 +36,14 @@ function UserDashBoard() {
     }
   };
 
+  
 useEffect(() => {
   const cateElement = cateScrollRef.current;
   const shopElement = ShopScrollRef.current;
 
   if (!cateElement && !shopElement) return;
 
-  const handleScroll = () => {
+  const handleScrollOrResize = () => {
     if (cateScrollRef.current) {
       updateButton(
         cateScrollRef,
@@ -60,17 +61,20 @@ useEffect(() => {
     }
   };
 
-  // 🔥 CALL ONCE INITIALLY
-  handleScroll();
+  // ✅ Run once initially
+  handleScrollOrResize();
 
-  // Add listeners
-  cateElement?.addEventListener("scroll", handleScroll);
-  shopElement?.addEventListener("scroll", handleScroll);
+  // Scroll listeners
+  cateElement?.addEventListener("scroll", handleScrollOrResize);
+  shopElement?.addEventListener("scroll", handleScrollOrResize);
 
-  // Cleanup
+  // ✅ Resize listener (IMPORTANT)
+  window.addEventListener("resize", handleScrollOrResize);
+
   return () => {
-    cateElement?.removeEventListener("scroll", handleScroll);
-    shopElement?.removeEventListener("scroll", handleScroll);
+    cateElement?.removeEventListener("scroll", handleScrollOrResize);
+    shopElement?.removeEventListener("scroll", handleScrollOrResize);
+    window.removeEventListener("resize", handleScrollOrResize);
   };
 }, [categories, shopsInMyCity]);
 
@@ -121,6 +125,8 @@ useEffect(() => {
         <h1 className="text-gray-800 text-2xl sm:text-3xl">
           Best Shop in {city}
         </h1>
+
+        {shopsInMyCity?.length>0 ?<>
         <div className="w-full relative">
           {showLeftShopButton && (
             <button
@@ -152,24 +158,35 @@ useEffect(() => {
             </button>
           )}
         </div>
+        </> :<div>
+     <p className="text-gray-500 text-lg mt-4">
+      No Shops available in {city}
+    </p>
+  </div>
+        }
       </div>
 
       <div className="w-full max-w-6xl flex flex-col gap-5 item-start p-2.5">
           <h1 className="text-gray-800 text-2xl sm:text-3xl">
             Suggested Food Items
         </h1>
-        {shopsInMyCity&& 
-        <div>
-            {shopsInMyCity &&
-    shopsInMyCity.map((shop, shopIndex) => (
-      <div key={shopIndex} className="flex gap-4 flex-wrap mb-5">
-        {shop.items?.map((item, ind) => (
-          <FoodCard data={item} key={ind} />
-        ))}
-      </div>
-    ))}
-        </div>
-        }
+        {shopsInMyCity?.length>0 ?
+  <div className="w-full h-auto flex flex-wrap gap-5 justify-center">
+    {shopsInMyCity.map((shop) =>
+      shop.items?.map((item) => (
+        <FoodCard
+          key={item._id}   // ✅ unique key
+          data={item}
+        />
+      ))
+    )}
+  </div> :<div>
+     <p className="text-gray-500 text-lg mt-4">
+      No food items available in {city}
+    </p>
+  </div>
+}
+
         
        
       </div>

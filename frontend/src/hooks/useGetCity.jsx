@@ -1,26 +1,32 @@
-import axios from 'axios'
-import React, { useEffect } from 'react'
+import axios from "axios";
+import React, { useEffect } from "react";
 
-import { useDispatch ,useSelector} from 'react-redux'
-import { setCity,setState,setCurrentAdress} from '../redux/UserSlice'
+import { useDispatch, useSelector } from "react-redux";
+import { setCity, setState, setCurrentAdress } from "../redux/UserSlice";
+import { setAddress, setLocation } from "../redux/mapSlice";
 function useGetCity() {
-    const dispatch=useDispatch()
-    const {userData}=useSelector(state=>state.user)
-    const APIKEY=import.meta.env.VITE_GEOAPIKEY
-  useEffect(()=>{
-   navigator.geolocation.getCurrentPosition(async(position)=>{
-    const {latitude,longitude}=position.coords
-    try {
-        const result=await axios.get(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${latitude}&longitude=${longitude}&format=json&apiKey=${APIKEY}`)
-  
-        dispatch(setCity(result?.data?.city))
-        dispatch(setState(result?.data?.principalSubdivision))
-        dispatch(setCurrentAdress((result?.data?.localityInfo?.administrative[3]?.description)||result?.data?.city))
-       
-    } catch (error) {
-        console.log(error)
-    }
-  })
-  },[userData])
+  const dispatch = useDispatch();
+  const { userData } = useSelector((state) => state.user);
+  const APIKEY = import.meta.env.VITE_GEOAPIKEY;
+  useEffect(() => {
+    navigator.geolocation.getCurrentPosition(async (position) => {
+      const { latitude, longitude } = position.coords;
+      dispatch(setLocation({ lat: latitude, lon: longitude }));
+      try {
+        const result = await axios.get(
+          `https://api.geoapify.com/v1/geocode/reverse?lat=${latitude}&lon=${longitude}&format=json&apiKey=${APIKEY}`
+        );
+
+        const location = result?.data?.results?.[0];
+        console.log(location)
+        dispatch(setCity(location?.city || location?.county ||""));
+        dispatch(setState(location?.state || ""));
+        dispatch(setCurrentAdress(location?.formatted || ""));
+        dispatch(setAddress(location?.formatted || ""));
+      } catch (error) {
+        console.log(error);
+      }
+    });
+  }, [userData]);
 }
-export default useGetCity
+export default useGetCity;

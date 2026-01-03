@@ -1,5 +1,6 @@
 require("dotenv").config()
 const express=require("express");
+const orderRouter=require("./routes/order_routes")
 const cors=require("cors")
 const database=require("./config/db");
 const cookieParser = require("cookie-parser");
@@ -21,7 +22,7 @@ app.use("/api/auth",authRouter)
 app.use("/api/user",userRouter)
 app.use("/api/shop",shopRouter)
 app.use("/api/item",itemRouter)
-
+app.use("/api/order",orderRouter)
 app.listen(port,()=>{
     database()
     console.log(`server is started at ${port}`);

@@ -13,6 +13,8 @@ import CreateEditShop from './pages/createEditShop'
 import AddItems from './pages/AddItems'
 import EditItem from './pages/EditItem'
 import useGetShopByCity from './hooks/useGetShopByCity'
+import CartPage from './pages/CartPage'
+import CheckOut from './pages/CheckOut'
 function App() {
   useGetCurrentuser()
   useGetShopByCity();
@@ -30,6 +32,9 @@ function App() {
       <Route path="/create-edit-shop" element={userData?.user?.role==="owner" ? <CreateEditShop/>:<Navigate to={"/"}/>}/>
       <Route path="/add-food" element={userData?.user?.role==="owner" ? <AddItems/>:<Navigate to={"/"}/>}/>
       <Route path="/edit-food/:id" element={userData?.user?.role==="owner" ? <EditItem/>:<Navigate to={"/"}/>}/>
+    <Route path="/cart" element={userData?.user?.role==="user" ? <CartPage/>:<Navigate to={"/"}/>}/>
+    <Route path="/checkout" element={userData?.user?.role==="user" ? <CheckOut/>:<Navigate to={"/"}/>}/>
+
 
     </Routes>
   )

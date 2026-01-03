@@ -1,15 +1,19 @@
 import React, { useState } from 'react'
 import { FaShoppingCart } from 'react-icons/fa'
 import { FaDrumstickBite, FaLeaf, FaStar,FaRegStar, FaMinus, FaPlus } from 'react-icons/fa6'
+import { useDispatch, useSelector } from 'react-redux'
+import {addToCart} from '../redux/UserSlice'
 
 function FoodCard({data}) {
     const [quantity,setQuantity]=useState(0)
+    const {cartItems}=useSelector(state=>state.user)
+    const dispatch=useDispatch()
     const renderStars=(rating)=>{
         const stars=[]
         for(let i=1;i<=5;i++){
             stars.push(
-                (i<=rating)? (<FaStar className='text-yellow-500 text-lg'/>):
-                (<FaRegStar  className='text-yellow-500 text-lg'/>)
+                (i<=rating)? (<FaStar key={i} className='text-yellow-500 text-lg'/>):
+                (<FaRegStar key={i} className='text-yellow-500 text-lg'/>)
             )
         }
 
@@ -41,7 +45,7 @@ function FoodCard({data}) {
             </span>
         </div>
 
-        <div className='flex items-center justify-between mt-auto p-3'>
+        <div className='flex items-center justify-between mt-auto pt-3'>
             <span className='font-bold text-gray-900 text-lg'>
                 ₹{data.price}
             </span>
@@ -53,9 +57,29 @@ function FoodCard({data}) {
                     <button onClick={handleIncrease} className='cursor-pointer py-1 px-2 hover:bg-gray-100 transition'>
                         <FaPlus size={12}/>
                     </button>
-                    <button className='bg-[#ff4d2d] cursor-pointer text-white px-3 py-2 transition-colors'>
-                        <FaShoppingCart/>
-                    </button>
+                 <button
+  className={`${
+    cartItems.some(i => i.id === data._id)
+      ? "bg-gray-800"
+      : "bg-[#ff4d2d]"
+  } cursor-pointer text-white px-3 py-2 transition-colors`}
+  onClick={() =>{
+    quantity>0 ? dispatch(
+      addToCart({
+        id: data._id,
+        name: data.name,
+        price: data.price,
+        image: data.image,
+        shop: data.shop,
+        quantity,
+        foodType: data.foodType
+      })
+    ):null}
+  }
+>
+  <FaShoppingCart size={16} />
+</button>
+
             </div>
         </div>
       </div>

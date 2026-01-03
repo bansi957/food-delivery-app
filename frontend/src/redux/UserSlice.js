@@ -1,4 +1,5 @@
-import { createSlice, current } from "@reduxjs/toolkit";
+import { createSlice } from "@reduxjs/toolkit";
+import { act } from "react";
 
 
 const userSlice=createSlice({
@@ -8,7 +9,9 @@ const userSlice=createSlice({
         city:null,
         state:null,
         currentAdress:null,
-        shopsInMyCity:null
+        shopsInMyCity:null,
+        cartItems:[],
+        totalAmount:0
     },
     reducers:{
         setUserData:(state,action)=>{
@@ -25,9 +28,32 @@ const userSlice=createSlice({
         },
         setShopsInMyCity(state,action){
             state.shopsInMyCity=action.payload
+        },
+        addToCart:(state,action)=>{
+            const cartItems=action.payload
+            const existing=state.cartItems.find(i=>i.id==cartItems.id)
+            if(existing){
+                existing.quantity+=cartItems.quantity
+            }else{
+            state.cartItems.push(cartItems)}
+         state.totalAmount=state.cartItems.reduce((sum,i)=>sum+i.price*i.quantity,0)
+        },
+        updateQuantity(state,action){
+            const {id,quantity}=action.payload
+            const item=state.cartItems.find(i=>i.id==id)
+            if(item){
+                item.quantity=quantity
+            }
+            state.totalAmount=state.cartItems.reduce((sum,i)=>sum+i.price*i.quantity,0)
+
+        },
+
+        removeCartItem(state,action){
+            state.cartItems=state.cartItems.filter(i=>i.id!==action.payload)
+            state.totalAmount=state.cartItems.reduce((sum,i)=>sum+i.price*i.quantity,0)
         }
     }   
 })
 
-export const {setUserData,setCity,setState,setCurrentAdress,setShopsInMyCity}=userSlice.actions
+export const {setUserData,setCity,setState,setCurrentAdress,setShopsInMyCity,addToCart,updateQuantity,removeCartItem}=userSlice.actions
 export default userSlice.reducer
