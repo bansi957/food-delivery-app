@@ -19,7 +19,7 @@ const user_schema=new mongoose.Schema({
     },
     role:{
         type:String,
-        enum:["user","owner","deleveryBoy"],
+        enum:["user","owner","deliveryBoy"],
         required:true
     },
     resetOtp:{
@@ -31,10 +31,17 @@ const user_schema=new mongoose.Schema({
     },
     otpExpires:{
         type:Date
+    },
+    location:{
+        type:{type:String,enum:['Point'],default:'Point'},
+        coordinates:{type:[Number],default:[0,0]}
+
     }
 
 },{
     timestamps:true
 })
+
+user_schema.index({'location':'2dsphere'})
 
 module.exports=mongoose.model("User",user_schema)

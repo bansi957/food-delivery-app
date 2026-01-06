@@ -18,7 +18,7 @@ function useGetCity() {
         );
 
         const location = result?.data?.results?.[0];
-        console.log(location)
+    
         dispatch(setCity(location?.city || location?.county ||""));
         dispatch(setState(location?.state || ""));
         dispatch(setCurrentAdress(location?.formatted || ""));

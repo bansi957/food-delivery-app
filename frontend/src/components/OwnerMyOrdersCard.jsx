@@ -1,0 +1,198 @@
+// import React from 'react'
+// import {MdPhone} from 'react-icons/md'
+// function OwnerMyOrdersCard({data}) {
+//   return (
+//     <div className='bg-white rounded-lg space-y-4 shadow p-4'>
+//       <div>
+//       <h2 className='text-lg font-semibold text-gray-800'> {data.user.fullName}</h2>
+//       <p className='text-sm text-gray-500'>{data.user.email}</p>
+//       <p className="flex items-center gap-2 text-sm text-gray-600 mt-1"><MdPhone/><span>{data.user.mobile}</span></p>
+//       </div>
+//       <div className='flex items-start flex-col gap-2 text-gray-600 text-sm'>
+//               <p>{data.deliveryAddress.text}</p>
+             
+//               <p className='texts-xs text-gray-500'>Lat: {data.deliveryAddress.latitude} , Lon: {data.deliveryAddress.longitude}</p>
+          
+//       </div>
+//        <div className="flex space-x-4 overflow-x-auto pb-2">
+//             {data.shopOrders.shopOrderItems.map((item, ind) => (
+//               <div
+//                 key={ind}
+//                 className="shrink-0 w-40 rounded-lg p-2 border bg-white"
+//               >
+//                 <img
+//                   src={item.item.image}
+//                   className="w-full h-24 object-cover rounded"
+//                 />
+//                 <p className="text-sm font-semibold mt-1">{item.name}</p>
+//                 <p className="text-xs text-gray-500">
+//                   Qty: {item.quantity} x ₹{item.price}
+//                 </p>
+//               </div>
+//             ))}
+//           </div>
+
+//           <div className='flex justify-between items-center mt-auto pt-3 border-t border-gray-100'>
+//               <span className='text-sm'>status: <span className='text-[#ff4d2d] font-semibold capitalize text'>{data.shopOrders.status}</span></span>
+//               <select value={data.shopOrders.status} className='border-[#ff4d2d] text-[#ff4d2d] rounded-md border px-3 py-1 text-sm focus:outline-none focus:ring-2'> 
+//                 <option value="pending">Pending</option>
+//                 <option value="preparing">Preparing</option>
+//                 <option value="out of delivery">Out Of Delivery</option>
+//               </select>
+//           </div>
+//           <div className='text-right font-bold text-gray-800 text-sm'>Total: ₹{data.shopOrders.subTotal}</div>
+//     </div>
+//   )
+// }
+
+// export default OwnerMyOrdersCard
+
+
+import React, { useRef, useState, useEffect } from "react";
+import { MdPhone } from "react-icons/md";
+import { FaCircleChevronLeft, FaCircleChevronRight } from "react-icons/fa6";
+import axios from "axios";
+import { serverUrl } from "../App";
+import { useDispatch } from "react-redux";
+import { updateOrderStatus } from "../redux/UserSlice";
+
+function OwnerMyOrdersCard({ data }) {
+  const [availableBoys,setAvailableBoys]=useState([])
+  const dispatch=useDispatch()
+  const scrollRef = useRef(null);
+  const [showLeft, setShowLeft] = useState(false);
+  const [showRight, setShowRight] = useState(false);
+
+  const updateButtons = () => {
+    const el = scrollRef.current;
+    if (!el) return;
+
+    setShowLeft(el.scrollLeft > 0);
+    setShowRight(el.scrollLeft + el.clientWidth < el.scrollWidth - 1);
+  };
+
+  const scrollHandler = (direction) => {
+    scrollRef.current?.scrollBy({
+      left: direction === "left" ? -200 : 200,
+      behavior: "smooth",
+    });
+  };
+
+  useEffect(() => {
+    updateButtons();
+    window.addEventListener("resize", updateButtons);
+    return () => window.removeEventListener("resize", updateButtons);
+  }, [data.shopOrders.shopOrderItems]);
+
+
+  const handleUpdateStatus=async (orderId,shopId,status)=>{
+      try {
+        const result=await axios.post(`${serverUrl}/api/order/update-status/${orderId}/${shopId}`,{status},{withCredentials:true})
+        dispatch(updateOrderStatus({orderId,shopId,status}))
+        setAvailableBoys(result.data.availableBoys)
+        console.log(result.data)
+      } catch (error) {
+        console.log(error)
+      }
+  }
+  return (
+    <div className="bg-white rounded-lg space-y-4 shadow p-4">
+      {/* User info */}
+      <div>
+        <h2 className="text-lg font-semibold text-gray-800">
+          {data.user.fullName}
+        </h2>
+        <p className="text-sm text-gray-500">{data.user.email}</p>
+        <p className="flex items-center gap-2 text-sm text-gray-600 mt-1">
+          <MdPhone />
+          <span>{data.user.mobile}</span>
+        </p>
+      </div>
+
+      {/* Address */}
+      <div className="flex flex-col gap-2 text-gray-600 text-sm">
+        <p>{data.deliveryAddress.text}</p>
+        <p className="text-xs text-gray-500">
+          Lat: {data.deliveryAddress.latitude}, Lon:{" "}
+          {data.deliveryAddress.longitude}
+        </p>
+      </div>
+
+      {/* Items with arrows */}
+      <div className="relative">
+        {showLeft && (
+          <button
+            onClick={() => scrollHandler("left")}
+            className="absolute left-0 top-1/2 -translate-y-1/2 bg-[#ff4d2d] text-white p-2 rounded-full z-10"
+          >
+            <FaCircleChevronLeft />
+          </button>
+        )}
+
+        <div
+          ref={scrollRef}
+          onScroll={updateButtons}
+          className="flex space-x-4 overflow-x-auto pb-2 scroll-smooth"
+        >
+          {data.shopOrders.shopOrderItems.map((item, ind) => (
+            <div
+              key={ind}
+              className="shrink-0 w-40 rounded-lg p-2 border bg-white"
+            >
+              <img
+                src={item.item.image}
+                className="w-full h-24 object-cover rounded"
+              />
+              <p className="text-sm font-semibold mt-1">{item.name}</p>
+              <p className="text-xs text-gray-500">
+                Qty: {item.quantity} × ₹{item.price}
+              </p>
+            </div>
+          ))}
+        </div>
+
+        {showRight && (
+          <button
+            onClick={() => scrollHandler("right")}
+            className="absolute right-0 top-1/2 -translate-y-1/2 bg-[#ff4d2d] text-white p-2 rounded-full z-10"
+          >
+            <FaCircleChevronRight />
+          </button>
+        )}
+      </div>
+
+      {/* Status & total */}
+      <div className="flex justify-between items-center pt-3 border-t border-gray-100">
+        <span className="text-sm">
+          Status:{" "}
+          <span className="text-[#ff4d2d] font-semibold capitalize">
+            {data.shopOrders.status}
+          </span>
+        </span>
+
+        <select
+        value={data.shopOrders.status}
+        onChange={(e)=>handleUpdateStatus(data._id,data.shopOrders.shop._id,e.target.value)}
+          className="border-[#ff4d2d] text-[#ff4d2d] rounded-md border px-3 py-1 text-sm focus:outline-none focus:ring-2"
+        >
+          <option value="pending">Pending</option>
+          <option value="preparing">Preparing</option>
+          <option value="out of delivery">Out Of Delivery</option>
+        </select>
+      </div>
+{data.shopOrders.status=="out of delivery" && <div className="mt-3 border p-2 rounded-lg text-sm bg-orange-50">
+  <p>Available Delivery Boys:</p>
+  {availableBoys.length>0?(
+    availableBoys.map((b,ind)=>(
+      <div key={ind} className="text-gray-800">{b.name}-{b.mobile}</div>
+    ))
+  ):<div>Waiting available delivery boy to accept</div>}
+  </div>}
+      <div className="text-right font-bold text-gray-800 text-sm">
+        Total: ₹{data.shopOrders.subTotal}
+      </div>
+    </div>
+  );
+}
+
+export default OwnerMyOrdersCard;

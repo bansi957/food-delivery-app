@@ -113,14 +113,14 @@ function NavBar() {
 
           
 
-          </>}
-          <div className="md:flex hidden items-center gap-2 cursor-pointer relative px-3 py-1 rounded-lg bg-[#ff4d2d]/10 text-[#ff4d2d] font-medium">
+          </>} 
+          <div  className="md:flex hidden items-center gap-2 cursor-pointer relative px-3 py-1 rounded-lg bg-[#ff4d2d]/10 text-[#ff4d2d] font-medium" onClick={()=>navigate("/my-orders")}>
             <TbReceipt2 size={20} className="text-[#ff4d2d] cursor-pointer" />
             <span>Pending Orders</span>
             <span className="absolute -right-2 -top-2 text-xs font-bold text-white bg-[#ff4d2d] rounded-full px-1.5 py-0.5">0</span>
           </div>
 
-          <div className="md:hidden flex items-center gap-2 cursor-pointer relative p-2 rounded-lg bg-[#ff4d2d]/10 text-[#ff4d2d] font-medium">
+          <div onClick={()=>navigate("/my-orders")} className="md:hidden flex items-center gap-2 cursor-pointer relative p-2 rounded-lg bg-[#ff4d2d]/10 text-[#ff4d2d] font-medium">
             <TbReceipt2 size={20} className="text-[#ff4d2d] cursor-pointer" />
             <span className="absolute -right-2 -top-2 text-xs font-bold text-white bg-[#ff4d2d] rounded-full px-1.5 py-0.5">0</span>
 
@@ -128,12 +128,12 @@ function NavBar() {
          
 
           </>
-          :<><div onClick={()=>navigate("/cart")} className=" relative cursor-pointer">
+          :<>{userData.user.role=="user" && <div onClick={()=>navigate("/cart")} className=" relative cursor-pointer">
             <FiShoppingCart size={25} className="text-[#ff4d2d]" />
             <span className="absolute -right-2 -top-3 text-[#ff4d2d]"> {cartItems.length}</span>
-          </div>
-    
-        <button className="hidden md:block px-3 py-1 rounded-lg bg-[#ff4d2d]/10 text-[#ff4d2d] text-sm font-medium">
+          </div>}
+        
+        <button onClick={()=>navigate("/my-orders")} className="hidden md:block px-3 py-1 cursor-pointer rounded-lg bg-[#ff4d2d]/10 text-[#ff4d2d] text-sm font-medium">
           My Orders
         </button></>
         }
@@ -155,8 +155,8 @@ function NavBar() {
         {userData?.user?.fullName || "User"}
       </div>
 
-      {userData?.user?.role === "user" &&
-        <div className="text-[#ff4d2d] md:hidden font-semibold cursor-pointer">
+      {(userData?.user?.role === "user" || userData?.user?.role === "deliveryBoy")&&
+        <div onClick={()=>navigate("/my-orders")} className="text-[#ff4d2d] md:hidden font-semibold cursor-pointer">
           My Orders
         </div>
 }

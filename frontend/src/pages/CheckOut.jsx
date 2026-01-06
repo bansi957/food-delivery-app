@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { ClipLoader } from "react-spinners";
 import { IoIosArrowRoundBack } from "react-icons/io";
 import { IoLocationSharp, IoSearchOutline } from "react-icons/io5";
 import { TbCurrentLocation } from "react-icons/tb";
@@ -12,6 +13,7 @@ import { MdDeliveryDining } from "react-icons/md";
 import { FaMobileScreenButton } from "react-icons/fa6";
 import { FaCreditCard } from "react-icons/fa";
 import { serverUrl } from "../App";
+import { addToMyorders } from "../redux/UserSlice";
 function RecenterMap({ location }) {
   if (location.lat && location.lon) {
     const map = useMap();
@@ -21,6 +23,7 @@ function RecenterMap({ location }) {
 }
 
 function CheckOut() {
+  const [loading,setLoading]=useState(false)
   const [paymentMethod, setPaymentMethod] = useState("cod");
   const APIKEY = import.meta.env.VITE_GEOAPIKEY;
   const navigate = useNavigate();
@@ -95,6 +98,7 @@ function CheckOut() {
   };
 
   const handlePlaceOrder = async () => {
+    setLoading(true)
         try {
           const result=await axios.post(`${serverUrl}/api/order/place-order`,{
             paymentMethod,
@@ -107,8 +111,12 @@ function CheckOut() {
             cartItems
           },{withCredentials:true})
           console.log(result.data)
+          dispatch(addToMyorders(result.data))
+          setLoading(false)
+          navigate("/orderplaced")
         } catch (error) {
           console.log(error)
+          setLoading(false)
         }
   };
 
@@ -249,8 +257,8 @@ function CheckOut() {
           </div>
         </section>
 
-        <button className="w-full bg-[#ff4d2d] rounded-xl font-semibold text-white py-3 hover:bg-[#e64526]" onClick={handlePlaceOrder}>
-          {paymentMethod == "cod" ? "Place Order" : "Pay and Place Order"}
+        <button  className="w-full bg-[#ff4d2d] rounded-xl font-semibold text-white py-3 hover:bg-[#e64526]" onClick={handlePlaceOrder}>
+        {loading ?<ClipLoader size={20} color='white'/>:(paymentMethod == "cod" ? "Place Order" : "Pay and Place Order")}
         </button>
       </div>
     </div>

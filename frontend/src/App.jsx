@@ -15,11 +15,17 @@ import EditItem from './pages/EditItem'
 import useGetShopByCity from './hooks/useGetShopByCity'
 import CartPage from './pages/CartPage'
 import CheckOut from './pages/CheckOut'
+import OrderPlaced from './pages/OrderPlaced'
+import MyOrders from './pages/MyOrders'
+import useGetMyOrders from './hooks/useGetMyOrders'
+import useUpdateLocation from './hooks/useUpdateLocation'
 function App() {
   useGetCurrentuser()
   useGetShopByCity();
   useGetCity()
   useGetMyShop()
+  useGetMyOrders()
+  useUpdateLocation()
   const {userData}=useSelector(state=>state.user)
 
   return (
@@ -34,6 +40,8 @@ function App() {
       <Route path="/edit-food/:id" element={userData?.user?.role==="owner" ? <EditItem/>:<Navigate to={"/"}/>}/>
     <Route path="/cart" element={userData?.user?.role==="user" ? <CartPage/>:<Navigate to={"/"}/>}/>
     <Route path="/checkout" element={userData?.user?.role==="user" ? <CheckOut/>:<Navigate to={"/"}/>}/>
+    <Route path="/orderplaced" element={userData?.user?.role==="user" ? <OrderPlaced/>:<Navigate to={"/"}/>}/>
+    <Route path="/my-orders" element={userData? <MyOrders/>:<Navigate to={"/"}/>}/>
 
 
     </Routes>

@@ -11,7 +11,8 @@ const userSlice=createSlice({
         currentAdress:null,
         shopsInMyCity:null,
         cartItems:[],
-        totalAmount:0
+        totalAmount:0,
+        myorders:null
     },
     reducers:{
         setUserData:(state,action)=>{
@@ -51,9 +52,23 @@ const userSlice=createSlice({
         removeCartItem(state,action){
             state.cartItems=state.cartItems.filter(i=>i.id!==action.payload)
             state.totalAmount=state.cartItems.reduce((sum,i)=>sum+i.price*i.quantity,0)
+        },
+        setMyOrders(state,action){
+            state.myorders=action.payload
+        },
+        addToMyorders(state,action){
+            state.myorders=[action.payload,...state.myorders]
+        },
+        updateOrderStatus(state,action){
+            const {orderId,shopId,status}=action.payload
+            const order=state.myorders.find(o=>o._id==orderId)
+            if(order && order.shopOrders.shop._id==shopId){
+                order.shopOrders.status=status
+            }
+            
         }
     }   
 })
 
-export const {setUserData,setCity,setState,setCurrentAdress,setShopsInMyCity,addToCart,updateQuantity,removeCartItem}=userSlice.actions
+export const {updateOrderStatus,addToMyorders,setMyOrders,setUserData,setCity,setState,setCurrentAdress,setShopsInMyCity,addToCart,updateQuantity,removeCartItem}=userSlice.actions
 export default userSlice.reducer
