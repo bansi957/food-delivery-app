@@ -154,12 +154,13 @@
 // export default UserMyOrdersCard;
 import React, { useRef, useState, useEffect } from "react";
 import { FaCircleChevronLeft, FaCircleChevronRight } from "react-icons/fa6";
+import { useNavigate } from "react-router-dom";
 
 function UserMyOrdersCard({ data }) {
   const scrollRefs = useRef([]);
   const [showLeft, setShowLeft] = useState({});
   const [showRight, setShowRight] = useState({});
-
+  const navigate=useNavigate()
   const formatDate = (dateString) =>
     new Date(dateString).toLocaleDateString("en-GB", {
       day: "2-digit",
@@ -287,7 +288,7 @@ function UserMyOrdersCard({ data }) {
         <p className="font-semibold">
           Total: ₹{data.totalAmount}
         </p>
-        <button className="bg-[#ff4d2d] hover:bg-[#e64526] text-white px-4 py-2 rounded-lg text-sm">
+        <button onClick={()=>navigate(`/track-order/${data._id}`)} className="bg-[#ff4d2d] hover:bg-[#e64526] text-white px-4 py-2 rounded-lg text-sm">
           Track Order
         </button>
       </div>

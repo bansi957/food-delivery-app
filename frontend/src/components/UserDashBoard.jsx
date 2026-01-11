@@ -5,15 +5,18 @@ import CategoryCard from "./CategoryCard";
 import { FaCircleChevronLeft, FaCircleChevronRight } from "react-icons/fa6";
 import { useSelector } from "react-redux";
 import FoodCard from "./FoodCard";
+import { useNavigate } from "react-router-dom";
 
 function UserDashBoard() {
+  const navigate=useNavigate()
   const cateScrollRef = useRef();
     const ShopScrollRef = useRef();
+    const [itemText,setItemtext]=useState("Suggested Food Items")
     const {shopsInMyCity}=useSelector(state=>state.user);
-
+  const [updatedItemsList,setupdatedItemsList]=useState([])
   const [showLeftCatButton, setShowLeftCatbutton] = useState(false);
   const [showRightCatButton, setShowRightCatbutton] = useState(false);
-
+  const [itemsInMyCity,setItemsInMyCity]=useState([])
   const [showLeftShopButton, setShowLeftShopbutton] = useState(false);
   const [showRightShopButton, setShowRightShopbutton] = useState(false);
   const { city } = useSelector((state) => state.user);
@@ -78,7 +81,24 @@ useEffect(() => {
   };
 }, [categories, shopsInMyCity]);
 
+const handleFilterByCategory=(category)=>{
+    if(category=="All"){
+      setItemtext("Suggested Food Items")
+      setupdatedItemsList(itemsInMyCity)
+    }
+    else{
+      const filteredItems=itemsInMyCity.filter(i=>i.category===category)
+      setItemtext(category)
+      setupdatedItemsList(filteredItems)
+    }
+}
 
+useEffect(()=>{
+  let arr=[]
+  shopsInMyCity?.map((shop)=>{shop?.items?.map((item)=>{arr.push(item)})})
+  setItemsInMyCity(arr)
+  setupdatedItemsList(arr)
+},[shopsInMyCity])
 
   return (
     <div className="w-screen min-h-screen flex flex-col gap-5 items-center bg-[#fff9f6] overflow-y-auto">
@@ -105,7 +125,7 @@ useEffect(() => {
             ref={cateScrollRef}
           >
             {categories.map((cat, ind) => (
-              <CategoryCard data={cat} key={ind} />
+              <CategoryCard onClick={()=>handleFilterByCategory(cat.category)} data={cat} key={ind} />
             ))}
           </div>
           {showRightCatButton && (
@@ -144,7 +164,7 @@ useEffect(() => {
           >
             
             {shopsInMyCity && shopsInMyCity.map((shop, ind) => (
-              <CategoryCard   data={{ category: shop.name, image: shop.image }}  key={ind} />
+              <CategoryCard onClick={()=>navigate(`/shop/${shop._id}`)} data={{ category: shop.name, image: shop.image }}  key={ind} />
             ))}
           </div>
           {showRightShopButton && (
@@ -168,18 +188,18 @@ useEffect(() => {
 
       <div className="w-full max-w-6xl flex flex-col gap-5 item-start p-2.5">
           <h1 className="text-gray-800 text-2xl sm:text-3xl">
-            Suggested Food Items
+               {itemText}
         </h1>
-        {shopsInMyCity?.length>0 ?
+        {itemsInMyCity?.length>0 ?
   <div className="w-full h-auto flex flex-wrap gap-5 justify-center">
-    {shopsInMyCity.map((shop) =>
-      shop.items?.map((item) => (
+    {
+      updatedItemsList?.length>0 ?<>{updatedItemsList.map((item) => (
         <FoodCard
           key={item._id}   // ✅ unique key
           data={item}
         />
-      ))
-    )}
+      ))}</>:<p className="text-gray-500 text-lg mt-4">No food items available in this category </p>
+    }
   </div> :<div>
      <p className="text-gray-500 text-lg mt-4">
       No food items available in {city}

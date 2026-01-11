@@ -3,7 +3,7 @@ const bcrypt=require("bcryptjs")
 const  jwtToken=require("../utils/token")
 
 const jwt =require("jsonwebtoken")
-const sendOtpEmail = require("../utils/mail")
+const {sendOtpEmail} = require("../utils/mail")
 
 const sendOtp = async (req, res) => {
   try {

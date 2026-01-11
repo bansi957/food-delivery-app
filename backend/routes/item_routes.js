@@ -2,11 +2,13 @@ const express=require("express")
 const itemRouter=express.Router()
 const auth=require("../middleware/auth_middleware")
 const multer=require("../middleware/multer")
-const {addItem,editItem,getItemById, deleteItemById}=require("../controllers/item_controller")
+const {addItem,editItem,getItemById, deleteItemById, getItemsByShopId}=require("../controllers/item_controller")
 
 
 itemRouter.post("/add-item",auth,multer.single("image"),addItem)
 itemRouter.put("/edit-item/:itemId",auth,multer.single("image"),editItem)
 itemRouter.get("/get-item/:itemId",auth,getItemById)
 itemRouter.get("/delete/:itemId",auth,deleteItemById)
+itemRouter.get("/get-by-shop/:shopId",auth,getItemsByShopId)
+
 module.exports=itemRouter;

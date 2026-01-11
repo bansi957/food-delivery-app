@@ -3,8 +3,6 @@ const uploadToCloudinary=require("../utils/cloudinary");
 const creatEditShop=async(req,res)=>{
     try {
         const  {name,city,state,address}=req.body;
-        console.log(req.body)
-        console.log(req.file)
         let image;
         if(req.file){
             image=await uploadToCloudinary(req.file.path);
@@ -74,7 +72,8 @@ const getShopByCity=async (req,res)=>{
 
         const shops=await Shop.find({
             city:{$regex:new RegExp(`^${city}$` , "i")}
-    }).populate({
+    }).sort({createdAt:-1})
+    .populate({
             path:"items",
             options:{sort:{updatedAt:-1}}
         })

@@ -23,7 +23,7 @@ export const categories = [
   { category: "Salads", image: image7 },
   { category: "Soups", image: image8 },
   { category: "Sandwiches", image: image9 },
-  { category: "Northen Indian", image: image10 },
+  { category: "Northern Indian", image: image10 },
   { category: "South Indian", image: image11 },
   { category: "Chinese", image: image12 },
   { category: "Fast Food", image: image13 },

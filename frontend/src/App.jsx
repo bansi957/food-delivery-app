@@ -19,6 +19,8 @@ import OrderPlaced from './pages/OrderPlaced'
 import MyOrders from './pages/MyOrders'
 import useGetMyOrders from './hooks/useGetMyOrders'
 import useUpdateLocation from './hooks/useUpdateLocation'
+import TrackOrder from './pages/TrackOrder'
+import Shop from './pages/Shop'
 function App() {
   useGetCurrentuser()
   useGetShopByCity();
@@ -42,6 +44,9 @@ function App() {
     <Route path="/checkout" element={userData?.user?.role==="user" ? <CheckOut/>:<Navigate to={"/"}/>}/>
     <Route path="/orderplaced" element={userData?.user?.role==="user" ? <OrderPlaced/>:<Navigate to={"/"}/>}/>
     <Route path="/my-orders" element={userData? <MyOrders/>:<Navigate to={"/"}/>}/>
+    <Route path="/track-order/:orderId" element={userData?.user?.role=="user"? <TrackOrder/>:<Navigate to={"/"}/>}/>
+    <Route path="/shop/:shopId" element={userData?.user?.role=="user"? <Shop/>:<Navigate to={"/"}/>}/>
+
 
 
     </Routes>

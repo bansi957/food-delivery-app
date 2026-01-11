@@ -18,4 +18,13 @@ const sendOtpEmail=async ({to,otp,sub})=>{
     })
 }
 
-module.exports=sendOtpEmail
+const sendDeliveryEmail=async ({to,otp,sub})=>{
+    await transport.sendMail({
+        from:process.env.MAIL_ID,
+        to,
+        subject:sub,
+        html:`<p>Your otp for delivery is <b>${otp}</b>. it expires in 5 minutes</p>`
+    })
+}
+
+module.exports={sendOtpEmail,sendDeliveryEmail}

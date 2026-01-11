@@ -169,8 +169,7 @@ function OwnerMyOrdersCard({ data }) {
             {data.shopOrders.status}
           </span>
         </span>
-
-        <select
+        {data.shopOrders.status!=="delivered" &&  <select
         value={data.shopOrders.status}
         onChange={(e)=>handleUpdateStatus(data._id,data.shopOrders.shop._id,e.target.value)}
           className="border-[#ff4d2d] text-[#ff4d2d] rounded-md border px-3 py-1 text-sm focus:outline-none focus:ring-2"
@@ -178,16 +177,39 @@ function OwnerMyOrdersCard({ data }) {
           <option value="pending">Pending</option>
           <option value="preparing">Preparing</option>
           <option value="out of delivery">Out Of Delivery</option>
-        </select>
+        </select>}
+       
       </div>
-{data.shopOrders.status=="out of delivery" && <div className="mt-3 border p-2 rounded-lg text-sm bg-orange-50">
-  <p>Available Delivery Boys:</p>
-  {availableBoys.length>0?(
-    availableBoys.map((b,ind)=>(
-      <div key={ind} className="text-gray-800">{b.name}-{b.mobile}</div>
-    ))
-  ):<div>Waiting available delivery boy to accept</div>}
-  </div>}
+
+
+{data.shopOrders.status === "out of delivery" && (
+  <div className="mt-3 border p-2 rounded-lg text-sm bg-orange-50">
+    {data.shopOrders.assignedDeliveryBoy ? (
+      <>
+        <p>Assigned Delivery Boy:</p>
+        <div className="text-gray-800">
+          {data.shopOrders.assignedDeliveryBoy.fullName}-{data.shopOrders.assignedDeliveryBoy.mobile}
+        </div>
+      </>
+    ) : (
+      <>
+        <p>Available Delivery Boys:</p>
+
+        {availableBoys.length > 0 ? (
+          availableBoys.map((b, ind) => (
+            <div key={ind} className="text-gray-800">
+              {b.name} - {b.mobile}
+            </div>
+          ))
+        ) : (
+          <div>Waiting available delivery boy to accept</div>
+        )}
+      </>
+    )}
+  </div>
+)}
+
+
       <div className="text-right font-bold text-gray-800 text-sm">
         Total: ₹{data.shopOrders.subTotal}
       </div>

@@ -40,7 +40,19 @@ const shopOrderSchema=new mongoose.Schema({
     },
     shopOrderItems:[
         shopOrderItemSchema
-    ]
+    ],
+     deliveryOtp:{
+        type:String,
+        default:null
+    },
+    otpExpires:{
+        type:Date,
+        default:null
+    },
+    deliveredAt:{
+        type:Date,
+        default:null
+    }
 },{timestamps:true})
 
 const orderSchema=new mongoose.Schema({

@@ -13,7 +13,7 @@ function useGetShopByCity() {
     const fetCity=async ()=>{
     
         try {
-            const result=await axios.get(`${serverUrl}/api/shop/get-by-city/Etcherla`,{withCredentials:true})
+            const result=await axios.get(`${serverUrl}/api/shop/get-by-city/Addanki`,{withCredentials:true})
             if(!result){
               return NULL
             }

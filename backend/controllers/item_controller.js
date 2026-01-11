@@ -130,4 +130,20 @@ const deleteItemById=async (req,res)=>{
         })
     }
 }
-module.exports={addItem,editItem,getItemById,deleteItemById};
+
+const getItemsByShopId=async (req,res)=>{
+    try {
+        const {shopId}=req.params
+        const shop=await Shop.findById(shopId)
+        .populate("items")
+        if(!shop){
+            return res.status(400).json({message:"shop not found"})
+        }
+        res.status(200).json({shop,items:shop.items})
+    } catch (error) {
+         res.status(500).json({
+            message:`get shop by id error ${error}`
+        })
+    }
+}
+module.exports={getItemsByShopId,addItem,editItem,getItemById,deleteItemById};
