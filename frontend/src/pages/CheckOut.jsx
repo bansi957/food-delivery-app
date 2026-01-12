@@ -24,6 +24,7 @@ function RecenterMap({ location }) {
 
 function CheckOut() {
   const [loading,setLoading]=useState(false)
+  const {userData}=useSelector(state=>state.user)
   const [paymentMethod, setPaymentMethod] = useState("cod");
   const APIKEY = import.meta.env.VITE_GEOAPIKEY;
   const navigate = useNavigate();
@@ -53,11 +54,11 @@ function CheckOut() {
   };
 
   const getCurrentLocation = () => {
-    navigator.geolocation.getCurrentPosition(async (position) => {
-      const { latitude, longitude } = position.coords;
+      const latitude=userData.user?.location?.coordinates[1]
+      const longitude=userData.user?.location?.coordinates[0]
       dispatch(setLocation({ lat: latitude, lon: longitude }));
       getAddressByLatLang(latitude, longitude);
-    });
+    
   };
 
   const getLatLonByAddress = async () => {
@@ -110,7 +111,7 @@ function CheckOut() {
             totalAmount,
             cartItems
           },{withCredentials:true})
-          console.log(result.data)
+       
           dispatch(addToMyorders(result.data))
           setLoading(false)
           navigate("/orderplaced")

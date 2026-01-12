@@ -3,6 +3,8 @@ const Order = require("../models/orderModel");
 const User=require("../models/user");
 const deliveryAssignmentModel = require("../models/deliveryAssignmentModel");
 const { sendDeliveryEmail } = require("../utils/mail");
+
+
 const placeOrder = async (req, res) => {
   try {
     const { cartItems, paymentMethod, deliveryAddress, totalAmount } = req.body;

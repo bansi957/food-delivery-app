@@ -8,10 +8,12 @@ import axios from "axios";
 import { RxCross2 } from "react-icons/rx";
 import { serverUrl } from "../App";
 import { useNavigate } from "react-router-dom";
-import { setUserData } from "../redux/UserSlice";
+import { setSearchItems, setUserData } from "../redux/UserSlice";
 import {TbReceipt2} from "react-icons/tb";
+import { useEffect } from "react";
 function NavBar() {
-  const { city } = useSelector((state) => state.user);
+  const [query,setQuery]=useState("")
+  const { city,searchItems } = useSelector((state) => state.user);
   const {myShopData}=useSelector((state)=>state.owner)
   const [showInfo, setShowInfo] = useState(false);
   const [showSearch, setShowSearch] = useState(false);
@@ -30,6 +32,36 @@ function NavBar() {
       console.log(error);
     }
   };
+    const handleSearchItems=async ()=>{
+       try {
+        const result=await axios.get(`${serverUrl}/api/item/search-items?query=${query}&city=Addanki`,{withCredentials:true})
+        dispatch(setSearchItems(result.data))
+       } catch (error) {
+        console.log(error)
+       }
+    }  
+  //   useEffect(()=>{
+  //     const trimmedquery=(query||"").trim()
+  //     if(query && trimmedquery.length>0){
+  //       handleSearchItems()
+  //     }
+  //     else{
+  //       dispatch(setSearchItems(null))
+  //     }
+  // },[query])
+    useEffect(() => {
+  const trimmedQuery = (query || "").trim();
+
+  const timer = setTimeout(() => {
+    if (trimmedQuery.length > 0) {
+      handleSearchItems(trimmedQuery);
+    } else {
+      dispatch(setSearchItems(null));
+    }
+  }, 300); // 👈 debounce delay (300ms)
+
+  return () => clearTimeout(timer);
+}, [query]);
 
   return (
     <div className="w-full h-20 flex items-center justify-between md:justify-center gap-8 px-5 fixed top-0 z-50 bg-[#fff9f6] overflow-visible">
@@ -46,7 +78,9 @@ function NavBar() {
                 className="text-[#ff4d2d] cursor-pointer"
               />{" "}
               <input
+              onChange={(e)=>setQuery(e.target.value)}
                 type="text"
+                value={query}
                 placeholder="Search delicious food..."
                 className="w-full px-2.5 text-gray-700 outline-0 "
               />
@@ -70,7 +104,9 @@ function NavBar() {
                 className="text-[#ff4d2d] cursor-pointer"
               />{" "}
               <input
+              onChange={(e)=>setQuery(e.target.value)}
                 type="text"
+                value={query}
                 placeholder="Search delicious food..."
                 className="w-full px-2.5 text-gray-700 outline-0 "
               />
@@ -83,15 +119,16 @@ function NavBar() {
         {userData.user.role == "user" &&
           (showSearch ? (
             <RxCross2
+              
               size={25}
               className="text-[#ff4d2d] cursor-pointer md:hidden"
-              onClick={() => setShowSearch(false)}
+              onClick={() => {setShowSearch(false); setQuery("");}}
             />
           ) : (
             <IoIosSearch
               size={25}
               className="text-[#ff4d2d] cursor-pointer md:hidden "
-              onClick={() => setShowSearch(true)}
+              onClick={() => {setShowSearch(true)}}
             />
           ))}
 

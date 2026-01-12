@@ -146,4 +146,39 @@ const getItemsByShopId=async (req,res)=>{
         })
     }
 }
-module.exports={getItemsByShopId,addItem,editItem,getItemById,deleteItemById};
+
+const searchItems=async (req,res)=>{
+    try {
+        const {query,city}=req.query
+        if(!query || !city){
+return res.status(400).json({
+  message: "Query and city are required"
+});        }
+
+          const shops=await Shop.find({
+                    city:{$regex:new RegExp(`^${city}$` , "i")}
+            }).sort({createdAt:-1})
+            .populate({
+                    path:"items",
+                    options:{sort:{updatedAt:-1}}
+                })
+        if(!shops){
+        return res.status(400).json({
+            message:"Shops Not Found"
+        })}
+        const shopIds=shops.map(s=>s._id)
+        const items=await Item.find({
+            shop:{$in:shopIds},
+            $or:[{name:{$regex:query,$options:"i"}},
+                {category:{$regex:query,$options:"i"}}]
+
+        }).populate("shop","name image")
+        return res.status(200).json(items)
+    } 
+     catch (error) {
+         res.status(500).json({
+            message:`get items by query error ${error}`
+        })
+    }
+}
+module.exports={searchItems,getItemsByShopId,addItem,editItem,getItemById,deleteItemById};
