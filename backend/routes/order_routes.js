@@ -1,5 +1,5 @@
 const express=require("express");
-const {placeOrder, getUserOrders, updateOrderstatus, getDeliveryBoyAssignment, acceptedOrder, getCurrentOrder, getOrderById, sendDeliveryOtp, verifyDeliveryOtp} = require("../controllers/order_controller");
+const {placeOrder, getUserOrders, updateOrderstatus, getDeliveryBoyAssignment, acceptedOrder, getCurrentOrder, getOrderById, sendDeliveryOtp, verifyDeliveryOtp, verifyPayment} = require("../controllers/order_controller");
 const auth=require("../middleware/auth_middleware");
 
 const orderRouter=express.Router()
@@ -14,6 +14,7 @@ orderRouter.post("/verify-delivery-otp",auth,verifyDeliveryOtp)
 orderRouter.get("/accept-order/:assignmentId",auth,acceptedOrder)
 orderRouter.get("/get-currentorder",auth,getCurrentOrder)
 orderRouter.get("/get-order-by-id/:orderId",auth,getOrderById)
+orderRouter.post("/verify-payment",auth,verifyPayment)
 
 
 

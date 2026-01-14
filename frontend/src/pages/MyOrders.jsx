@@ -1,12 +1,33 @@
 import React from 'react'
-import {useSelector} from 'react-redux'
+import {useDispatch, useSelector} from 'react-redux'
 import { IoIosArrowRoundBack } from "react-icons/io";
 import { useNavigate } from 'react-router-dom';
 import UserMyOrdersCard from '../components/UserMyOrdersCard';
 import OwnerMyOrdersCard from '../components/OwnerMyOrdersCard'
+import { useEffect } from 'react';
+import { addToMyorders } from '../redux/UserSlice';
+import { getSocket } from '../../socket';
 function MyOrders() {
   const {userData,myorders}=useSelector(state=>state.user) 
   const navigate=useNavigate()
+  const dispatch=useDispatch()
+
+useEffect(() => {
+  if (!userData?.user?._id) return
+
+  const socket = getSocket()
+
+  const handleNewOrder = (data) => {
+    if (data.shopOrders.owner._id === userData.user._id) {
+      dispatch(addToMyorders(data))
+    }
+  }
+
+  socket.on("newOrder", handleNewOrder)
+
+  return () => socket.off("newOrder", handleNewOrder)
+}, [userData?.user?._id, dispatch])
+
 
   return (
     <div className='w-full min-h-screen bg-[#fff9f6] flex justify-center px-4'>
@@ -36,6 +57,6 @@ function MyOrders() {
       </div>
     </div>
   )
-}
+}  
 
 export default MyOrders

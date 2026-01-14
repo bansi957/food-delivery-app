@@ -90,7 +90,7 @@ function SignIn() {
           className="text-3xl font-bold text-center mb-2"
           style={{ color: primaryColor }}
         >
-          Swiggy
+          Zwiggy
         </h1>
 
         <p className="text-center text-gray-500 text-sm mb-6">

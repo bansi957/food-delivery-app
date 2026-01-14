@@ -1,9 +1,16 @@
+require("dotenv").config()
 const Shop = require("../models/shopModel");
 const Order = require("../models/orderModel");
 const User=require("../models/user");
 const deliveryAssignmentModel = require("../models/deliveryAssignmentModel");
 const { sendDeliveryEmail } = require("../utils/mail");
 
+const Razorpay = require("razorpay");
+
+let instance=new Razorpay({
+  key_id:process.env.RAZORPAY_KEY_ID,
+  key_secret:process.env.RAZORPAY_KEY_SECRET,
+})
 
 const placeOrder = async (req, res) => {
   try {
@@ -58,7 +65,25 @@ const placeOrder = async (req, res) => {
         };
       })
     );
+    if(paymentMethod=="online"){
+       const razorOrder=await instance.orders.create({
+        amount:Math.round(totalAmount*100),
+        currency:"INR",
+        receipt:`receipt_${Date.now()}`
+      })
+      const newOrder = await Order.create({
+      user: req.userId,
+      paymentMethod,
+      deliveryAddress,
+      totalAmount,
+      shopOrders,
+      razorPayOrderId:razorOrder.id,
+      payment:false
+    })
 
+    return res.status(200).json({razorOrder,orderId:newOrder._id})
+    }
+  
     const newOrder = await Order.create({
       user: req.userId,
       paymentMethod,
@@ -66,18 +91,67 @@ const placeOrder = async (req, res) => {
       totalAmount,
       shopOrders,
     })
-    
+  
 
     const populatedOrder = await Order.findById(newOrder._id)
       .populate("user")
       .populate("shopOrders.shop", "name")
+      .populate("shopOrders.owner", "name socketId")
       .populate("shopOrders.shopOrderItems.item", "image");
+    const io=req.app.get('io')
+    if(io){
+      populatedOrder.shopOrders.forEach(shopOrder=>{
+        const ownerSocketId=shopOrder.owner.socketId
+        if(ownerSocketId){
+          io.to(ownerSocketId).emit("newOrder",{
+        _id:populatedOrder._id,
+        deliveryAddress:populatedOrder.deliveryAddress,
+        paymentMethod:populatedOrder.paymentMethod,
+        user:populatedOrder.user,
+        shopOrders:shopOrder,
+        createdAt:populatedOrder.createdAt,
+        payment:populatedOrder.payment
+      })
+        }
+      })
+    }
 
     return res.status(200).json(populatedOrder);
   } catch (error) {
     return res.status(500).json({ message: `place order error ${error}` });
   }
 };
+
+const verifyPayment=async (req,res)=>{
+  try {
+    const {razorpay_payment_id,orderId}=req.body
+    const payment=await instance.payments.fetch(razorpay_payment_id)
+    if(!payment || payment.status!="captured" ){
+       return res.status(400).json({
+        message: "Payment not captured",
+      });
+    }
+    const order=await Order.findById(orderId)
+    if(!order){
+       return res.status(400).json({
+        message: "order not found",
+      });
+    }
+    order.payment=true;
+    order.razorpayPaymentId=razorpay_payment_id
+    await order.save()
+
+      await order.populate("user")
+      await order.populate("shopOrders.shop", "name")
+      await order.populate("shopOrders.shopOrderItems.item", "name price image");
+    return res.status(200).json(order)
+
+  } catch (error) {
+        return res.status(500).json({ message: `verify payment error${error}` });
+
+  }
+}
+
 
 const getUserOrders=async (req,res)=>{
   try {
@@ -104,7 +178,8 @@ const getUserOrders=async (req,res)=>{
         paymentMethod:order.paymentMethod,
         user:order.user,
         shopOrders:order.shopOrders.find(o=>o.owner==req.userId),
-        createdAt:order.createdAt
+        createdAt:order.createdAt,
+        payment:order.payment
       }))
     return res.status(200).json(filteredorders)
     }
@@ -406,4 +481,4 @@ const verifyDeliveryOtp=async (req,res)=>{
     })
   }
 }
-module.exports = {sendDeliveryOtp,verifyDeliveryOtp,getOrderById,getCurrentOrder,acceptedOrder,placeOrder,getUserOrders,updateOrderstatus,getDeliveryBoyAssignment};
+module.exports = {verifyPayment,sendDeliveryOtp,verifyDeliveryOtp,getOrderById,getCurrentOrder,acceptedOrder,placeOrder,getUserOrders,updateOrderstatus,getDeliveryBoyAssignment};

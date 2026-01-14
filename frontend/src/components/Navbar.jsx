@@ -90,7 +90,7 @@ function NavBar() {
       )}
 
 
-      <h1 className="text-3xl font-bold mb-2 text-[#ff4d2d]">Swiggy</h1>
+      <h1 className="text-3xl font-bold mb-2 text-[#ff4d2d]">Zwiggy</h1>
       {userData.user.role == "user" && (
         <div className="  items-center md:w-3/5 lg:w-2/5 h-16 bg-white shadow-xl rounded-lg gap-5  hidden  md:flex">
           <div className="flex items-center w-[30%] overflow-hidden gap-2.5 px-2.5 border-r-2 border-gray-400">

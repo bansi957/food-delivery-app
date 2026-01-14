@@ -10,9 +10,9 @@ function Home() {
 
 <div className="w-screen min-h-screen pt-24 flex flex-col items-center bg-[#fff9f6]">
   
-        {userData.user.role==="user" && <UserDashBoard/>}
-         {userData.user.role==="owner" && <OwnerDashBoard/>}
-         {userData.user.role==="deliveryBoy" && <DelieveryBoyDashBoard/>}
+        {userData?.user?.role==="user" && <UserDashBoard/>}
+         {userData?.user?.role==="owner" && <OwnerDashBoard/>}
+         {userData?.user?.role==="deliveryBoy" && <DelieveryBoyDashBoard/>}
      </div>
   )
 }

@@ -5,7 +5,7 @@ import SignUp from './pages/SignUp'
 import SignIn from './pages/SignIn'
 import ForgotPassword from './pages/forgotPassword'
 import useGetCurrentuser from './hooks/useGetCurrentuser'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import useGetCity from './hooks/useGetCity'
 import Home from './pages/Home'
 import useGetMyShop from './hooks/useGetMyShop'
@@ -21,6 +21,9 @@ import useGetMyOrders from './hooks/useGetMyOrders'
 import useUpdateLocation from './hooks/useUpdateLocation'
 import TrackOrder from './pages/TrackOrder'
 import Shop from './pages/Shop'
+import { useEffect } from 'react'
+import { getSocket } from '../socket'
+
 function App() {
   useGetCurrentuser()
   useGetShopByCity();
@@ -29,6 +32,15 @@ function App() {
   useGetMyOrders()
   useUpdateLocation()
   const {userData}=useSelector(state=>state.user)
+  
+ useEffect(() => {
+  if (!userData?.user?._id) return
+
+  const socket = getSocket()
+
+  socket.emit("identity", { userId: userData.user._id })
+
+}, [userData?.user?._id])
 
   return (
     <Routes>
