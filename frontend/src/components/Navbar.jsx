@@ -1,3 +1,5 @@
+import { getSocket } from "../../socket";
+import { addToMyorders } from "../redux/UserSlice";
 import React, { useState } from "react";
 import { FaLocationDot } from "react-icons/fa6";
 import { IoIosSearch } from "react-icons/io";
@@ -13,7 +15,7 @@ import {TbReceipt2} from "react-icons/tb";
 import { useEffect } from "react";
 function NavBar() {
   const [query,setQuery]=useState("")
-  const { city,searchItems } = useSelector((state) => state.user);
+  const { city,myorders} = useSelector((state) => state.user);
   const {myShopData}=useSelector((state)=>state.owner)
   const [showInfo, setShowInfo] = useState(false);
   const [showSearch, setShowSearch] = useState(false);
@@ -63,6 +65,28 @@ function NavBar() {
   return () => clearTimeout(timer);
 }, [query]);
 
+const [count,setCount]=useState(0)
+useEffect(()=>{
+  setCount(myorders?.length)
+},[myorders,userData])
+
+useEffect(() => {
+  if (userData?.user?.role !== "owner") return;
+
+  const socket = getSocket();
+
+  const handleNewOrder = (data) => {
+    if (data?.shopOrders?.owner?._id === userData.user._id) {
+      dispatch(addToMyorders(data));
+    }
+  };
+
+  socket.on("newOrder", handleNewOrder);
+
+  return () => {
+    socket.off("newOrder", handleNewOrder);
+  };
+}, [userData?.user?._id, dispatch]);
   return (
     <div className="w-full h-20 flex items-center justify-between md:justify-center gap-8 px-5 fixed top-0 z-50 bg-[#fff9f6] overflow-visible">
       {userData.user.role == "user" && showSearch && (
@@ -153,26 +177,26 @@ function NavBar() {
           </>} 
           <div  className="md:flex hidden items-center gap-2 cursor-pointer relative px-3 py-1 rounded-lg bg-[#ff4d2d]/10 text-[#ff4d2d] font-medium" onClick={()=>navigate("/my-orders")}>
             <TbReceipt2 size={20} className="text-[#ff4d2d] cursor-pointer" />
-            <span>Pending Orders</span>
-            <span className="absolute -right-2 -top-2 text-xs font-bold text-white bg-[#ff4d2d] rounded-full px-1.5 py-0.5">0</span>
+            <span>My Orders</span>
+            <span className="absolute right-0 -top-1 translate-x-1/2 text-xs font-bold text-white bg-[#ff4d2d] rounded-full px-1.5 py-0.5">{count}</span>
           </div>
 
           <div onClick={()=>navigate("/my-orders")} className="md:hidden flex items-center gap-2 cursor-pointer relative p-2 rounded-lg bg-[#ff4d2d]/10 text-[#ff4d2d] font-medium">
             <TbReceipt2 size={20} className="text-[#ff4d2d] cursor-pointer" />
-            <span className="absolute -right-2 -top-2 text-xs font-bold text-white bg-[#ff4d2d] rounded-full px-1.5 py-0.5">0</span>
+            <span className="absolute right-0 -top-1 translate-x-1/2 text-xs font-bold text-white bg-[#ff4d2d] rounded-full px-1.5 py-0.5">{count}</span>
 
           </div>
          
 
           </>
-          :<>{userData.user.role=="user" && <div onClick={()=>navigate("/cart")} className=" relative cursor-pointer">
+          :<>{userData.user.role=="user" &&<> <div onClick={()=>navigate("/cart")} className=" relative cursor-pointer">
             <FiShoppingCart size={25} className="text-[#ff4d2d]" />
             <span className="absolute -right-2 -top-3 text-[#ff4d2d]"> {cartItems.length}</span>
-          </div>}
+          </div>
         
         <button onClick={()=>navigate("/my-orders")} className="hidden md:block px-3 py-1 cursor-pointer rounded-lg bg-[#ff4d2d]/10 text-[#ff4d2d] text-sm font-medium">
           My Orders
-        </button></>
+        </button></>}</>
         }
 
       
@@ -192,7 +216,7 @@ function NavBar() {
         {userData?.user?.fullName || "User"}
       </div>
 
-      {(userData?.user?.role === "user" || userData?.user?.role === "deliveryBoy")&&
+      {(userData?.user?.role === "user")&&
         <div onClick={()=>navigate("/my-orders")} className="text-[#ff4d2d] md:hidden font-semibold cursor-pointer">
           My Orders
         </div>

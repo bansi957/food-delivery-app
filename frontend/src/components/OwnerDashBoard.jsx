@@ -1,13 +1,15 @@
 import React from "react";
 import NavBar from "./NavBar";
-import { useSelector } from "react-redux";
+import {  useSelector } from "react-redux";
 import { FaUtensils } from "react-icons/fa6";
 import { useNavigate } from "react-router-dom";
 import { FaPen } from "react-icons/fa";
 import OwnerItemCard from "./OwnerItemCard";
+
 function OwnerDashBoard() {
-  const { myShopData } = useSelector((state) => state.owner);
+  const { myShopData,userData } = useSelector((state) => state.owner);
   const navigate = useNavigate();
+ 
 
   return (
     <>

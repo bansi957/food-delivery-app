@@ -3,7 +3,6 @@ import React, { useEffect } from 'react'
 import { serverUrl } from '../App'
 import { useDispatch, useSelector } from 'react-redux'
 import { setMyOrders } from '../redux/UserSlice'
-import MyOrders from '../pages/MyOrders'
 function useGetMyOrders() {
     const dispatch=useDispatch()
     const {userData}=useSelector(state=>state.user)

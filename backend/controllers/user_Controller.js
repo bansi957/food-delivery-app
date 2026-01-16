@@ -43,4 +43,6 @@ const updateUserLoaction=async (req,res)=>{
         })
     }
 }
+
+
 module.exports={getCurrentUser,updateUserLoaction}

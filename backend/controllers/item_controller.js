@@ -181,4 +181,36 @@ return res.status(400).json({
         })
     }
 }
-module.exports={searchItems,getItemsByShopId,addItem,editItem,getItemById,deleteItemById};
+
+const rating=async (req,res)=>{
+    try {
+        const {rating,itemId}=req.body
+        if(!rating || !itemId){
+            return res.status(400).json({message:"rating and itemId are required"})
+        }
+
+        if(rating<1 || rating>5){
+            return res.status(400).json({message:"rating must be between 1 and 5"})
+        }
+
+        const item=await Item.findById(itemId)
+        if(!item){
+            return res.status(400).json({message:"Item not found"})
+        }
+        const newCount=item.rating.count+1
+        const newRating=((item.rating.average*item.rating.count)+rating)/newCount
+        const updatedItem=await Item.findByIdAndUpdate(itemId,{
+            rating:{
+                count:newCount,
+                average:newRating
+            }
+        },{new:true})
+        return res.status(200).json({rating:updatedItem.rating})
+    } catch (error) {
+        return res.status(500).json({
+            message:`rating error ${error}`
+        })
+    }
+}
+
+module.exports={rating,searchItems,getItemsByShopId,addItem,editItem,getItemById,deleteItemById};

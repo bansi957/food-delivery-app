@@ -14,7 +14,7 @@ function useUpdateLocation() {
 }
     navigator.geolocation.watchPosition((pos)=>{
         updateLocation(pos.coords.latitude,pos.coords.longitude)
-    }) 
+    })
   }, [userData]);
 }
 export default useUpdateLocation;

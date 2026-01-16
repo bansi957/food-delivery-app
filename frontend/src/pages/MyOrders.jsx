@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import UserMyOrdersCard from '../components/UserMyOrdersCard';
 import OwnerMyOrdersCard from '../components/OwnerMyOrdersCard'
 import { useEffect } from 'react';
-import { addToMyorders } from '../redux/UserSlice';
+import { addToMyorders, updateRealTimeOrderStatus } from '../redux/UserSlice';
 import { getSocket } from '../../socket';
 function MyOrders() {
   const {userData,myorders}=useSelector(state=>state.user) 
@@ -24,8 +24,15 @@ useEffect(() => {
   }
 
   socket.on("newOrder", handleNewOrder)
-
-  return () => socket.off("newOrder", handleNewOrder)
+  socket.on('update-status',({orderId,shopId,status,userId})=>{
+    if(userId==userData.user._id){
+      dispatch(updateRealTimeOrderStatus({orderId,shopId,status}))
+    }
+  })
+ 
+  return () => {
+    socket.off("newOrder", handleNewOrder);
+    socket.off("update-status")}
 }, [userData?.user?._id, dispatch])
 
 
@@ -40,7 +47,7 @@ useEffect(() => {
                         onClick={() => navigate("/")}
                       />
                     </div>
-                    <h1 className="text-2xl font-bold text-start">{userData?.user?.role==="user"||userData?.user?.role==="deliveryBoy" ?"My Orders": "Pending Orders"}</h1>
+                    <h1 className="text-2xl font-bold text-start">My Orders</h1>
                   </div>
           <div className='space-y-10'>
               {myorders?.map((order,ind)=>(
@@ -52,7 +59,7 @@ useEffect(() => {
                 (
                   <OwnerMyOrdersCard data={order} key={ind}/>
                 ):null
-                              ))}
+                        ))}
           </div>
       </div>
     </div>

@@ -152,11 +152,15 @@
 // }
 
 // export default UserMyOrdersCard;
+import axios from "axios";
 import React, { useRef, useState, useEffect } from "react";
 import { FaCircleChevronLeft, FaCircleChevronRight } from "react-icons/fa6";
 import { useNavigate } from "react-router-dom";
+import { serverUrl } from "../App";
+import { FaRegStar, FaStar } from "react-icons/fa";
 
 function UserMyOrdersCard({ data }) {
+  const [selectedRating,setSelectedRating]=useState({})
   const scrollRefs = useRef([]);
   const [showLeft, setShowLeft] = useState({});
   const [showRight, setShowRight] = useState({});
@@ -190,7 +194,16 @@ function UserMyOrdersCard({ data }) {
       behavior: "smooth",
     });
   };
-
+const handleRating=async (itemId,rating)=>{
+    try {
+        const res=await axios.post(`${serverUrl}/api/item/rating`,{itemId,rating},{withCredentials:true})
+        setSelectedRating(prev=>({...prev,[itemId]:rating}))
+            
+        
+    } catch (error) {
+        console.log("error in rating",error)
+    }
+}
   useEffect(() => {
     data.shopOrders.forEach((_, i) => updateButtons(i));
 
@@ -261,6 +274,25 @@ function UserMyOrdersCard({ data }) {
                   <p className="text-xs text-gray-500">
                     Qty: {item.quantity} × ₹{item.price}
                   </p>
+
+                  {shopOrder.status==="delivered" && (
+                    <div className="flex space-x-1 mt-2">
+                      {[1, 2, 3, 4, 5].map((star) => (
+                        <button
+                          key={star}
+                          onClick={() => handleRating(item.item._id, star)}
+                          className="text-yellow-400 focus:outline-none"
+                        >
+                          {star <= (selectedRating[item.item._id] || 0) ? (
+                            <FaStar />
+                          ) : (
+                            <FaRegStar />
+                          )}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+
                 </div>
               ))}
             </div>
