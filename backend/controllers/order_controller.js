@@ -560,12 +560,15 @@ const verifyDeliveryOtp=async (req,res)=>{
   }
 }
 
+
+
 const getTodayDeliveries = async (req, res) => {
   try {
     const dId = new mongoose.Types.ObjectId(req.userId);
 
+    // IST start of day (UTC equivalent)
     const startOfDay = new Date();
-    startOfDay.setHours(0, 0, 0, 0);
+    startOfDay.setUTCHours(18, 30, 0, 0);
 
     const orders = await Order.find({
       shopOrders: {
@@ -612,5 +615,58 @@ const getTodayDeliveries = async (req, res) => {
     });
   }
 };
+
+// const getTodayDeliveries = async (req, res) => {
+//   try {
+//     const dId = new mongoose.Types.ObjectId(req.userId);
+
+//     const startOfDay = new Date();
+//     startOfDay.setHours(0, 0, 0, 0);
+
+//     const orders = await Order.find({
+//       shopOrders: {
+//         $elemMatch: {
+//           assignedDeliveryBoy: dId,
+//           status: "delivered",
+//           deliveredAt: { $gte: startOfDay }
+//         }
+//       }
+//     }).lean();
+
+//     const todaysDeliveries = [];
+
+//     orders.forEach(order => {
+//       order.shopOrders.forEach(shopOrder => {
+//         if (
+//           shopOrder.status === "delivered" &&
+//           shopOrder.deliveredAt &&
+//           shopOrder.deliveredAt >= startOfDay &&
+//           shopOrder.assignedDeliveryBoy?.toString() === dId.toString()
+//         ) {
+//           todaysDeliveries.push(shopOrder);
+//         }
+//       });
+//     });
+
+//     const stats = {};
+//     todaysDeliveries.forEach(order => {
+//       const hour = new Date(order.deliveredAt).getHours();
+//       stats[hour] = (stats[hour] || 0) + 1;
+//     });
+
+//     const formattedStats = Object.entries(stats)
+//       .map(([hour, count]) => ({
+//         hour: Number(hour),
+//         count
+//       }))
+//       .sort((a, b) => a.hour - b.hour);
+
+//     return res.status(200).json(formattedStats);
+//   } catch (error) {
+//     return res.status(500).json({
+//       message: `get today deliveries error ${error.message}`
+//     });
+//   }
+// };
 
 module.exports = {getTodayDeliveries,verifyPayment,sendDeliveryOtp,verifyDeliveryOtp,getOrderById,getCurrentOrder,acceptedOrder,placeOrder,getUserOrders,updateOrderstatus,getDeliveryBoyAssignment};
