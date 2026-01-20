@@ -1,4 +1,5 @@
 import React, { use } from 'react'
+import "./utils/leafletIconFix";
 export const serverUrl="https://zwiggy-backend-tqab.onrender.com"
 import {Routes,Route,Navigate} from 'react-router-dom'
 import SignUp from './pages/SignUp'
