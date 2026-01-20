@@ -1,6 +1,7 @@
 const User = require("./models/user");
 const socketHandler = (io) => {
   io.on("connection", (socket) => {
+      console.log("SOCKET CONNECTED:", socket.id);
     socket.on("identity", async ({ userId }) => {
       try {
         const user = await User.findByIdAndUpdate(
