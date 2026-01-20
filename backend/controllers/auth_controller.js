@@ -45,7 +45,7 @@ const {sendOtpEmail} = require("../utils/mail")
 const signUp=async(req,res)=>{
     try {
 
-        const {fullName,email,password,mobile,role,otp}=req.body;
+        const {fullName,email,password,mobile,role}=req.body;
         let user=await User.findOne({email})
         if(user){
             return res.status(400).json({
@@ -277,4 +277,4 @@ const googleAuth=async (req,res)=>{
         })
     }
 }
-module.exports={signUp,signIn,signOut,sendOtp,sendotp,verifyOtp,resetPassword,googleAuth}
+module.exports={signUp,signIn,signOut,sendotp,verifyOtp,resetPassword,googleAuth}
