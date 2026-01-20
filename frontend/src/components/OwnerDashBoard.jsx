@@ -1,5 +1,5 @@
 import React from "react";
-import NavBar from "./NavBar";
+import NavBar from "./Navbar";
 import {  useSelector } from "react-redux";
 import { FaUtensils } from "react-icons/fa6";
 import { useNavigate } from "react-router-dom";
