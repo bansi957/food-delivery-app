@@ -13,7 +13,7 @@ const http=require("http")
 
 const server=http.createServer(app)
 app.set("trust proxy", 1);
-const io=new Server(server,{cors:{
+const io=new Server(server,{path: "/socket.io",cors:{
     origin:"https://zwiggy-iuvx.onrender.com",
     credentials:true,
     methods:['POST','GET']
