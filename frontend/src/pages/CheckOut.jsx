@@ -165,27 +165,32 @@ const openRazorpayWindow=(orderId,razorOrder)=>{
           <h2 className="text-lg font-semibold mb-2 flex items-center gap-2 text-gray-800">
             <IoLocationSharp className="text-[#ff4d2d]" /> Delivery Location
           </h2>
-          <div className="flex gap-2 mb-3">
-            <input
-              placeholder="Enter Your Delivery Address..."
-              type="text"
-              className="flex-1 border border-gray-300 rounded-lg p-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#ff4d2d]"
-              value={searchLoc}
-              onChange={(e) => setSearchLoc(e.target.value)}
-            />
-            <button
-              onClick={getLatLonByAddress}
-              className="bg-[#ff4d2d] hover:bg-[#e64526] text-white px-3 py-2 rounded-lg flex items-center justify-center"
-            >
-              <IoSearchOutline size={17} />{" "}
-            </button>
-            <button
-              onClick={getCurrentLocation}
-              className="bg-blue-500  hover:bg-blue-600 text-white px-3 py-2 rounded-lg flex items-center justify-center"
-            >
-              <TbCurrentLocation size={17} />
-            </button>
-          </div>
+        <div className="flex flex-col sm:flex-row gap-2 mb-3">
+  <input
+    placeholder="Enter Your Delivery Address..."
+    type="text"
+    className="w-full border border-gray-300 rounded-lg p-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#ff4d2d]"
+    value={searchLoc}
+    onChange={(e) => setSearchLoc(e.target.value)}
+  />
+
+  <div className="flex gap-2 sm:w-auto">
+    <button
+      onClick={getLatLonByAddress}
+      className="flex-1 sm:flex-none bg-[#ff4d2d] hover:bg-[#e64526] text-white px-3 py-2 rounded-lg flex items-center justify-center"
+    >
+      <IoSearchOutline size={17} />
+    </button>
+
+    <button
+      onClick={getCurrentLocation}
+      className="flex-1 sm:flex-none bg-blue-500 hover:bg-blue-600 text-white px-3 py-2 rounded-lg flex items-center justify-center"
+    >
+      <TbCurrentLocation size={17} />
+    </button>
+  </div>
+</div>
+
           <div className="rounded-xl border overflow-hidden">
             <div className="h-64 w-full flex items-center justify-center">
               <MapContainer
