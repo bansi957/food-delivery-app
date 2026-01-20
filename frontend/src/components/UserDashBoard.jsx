@@ -148,7 +148,7 @@ useEffect(()=>{
 
       <div className="w-full max-w-6xl flex flex-col gap-5 item-start p-2.5">
         <h1 className="text-gray-800 text-2xl sm:text-3xl">
-          Best Shop in {city}
+          Best Shops in {city}
         </h1>
 
         {shopsInMyCity?.length>0 ?<>
