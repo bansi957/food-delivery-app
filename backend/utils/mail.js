@@ -2,11 +2,11 @@ import { Resend } from "resend";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
-export const sendDeliveryEmail = async ({ to, otp }) => {
+export const sendDeliveryEmail = async ({ to, otp,sub }) => {
   return resend.emails.send({
     from: "Zwiggy <onboarding@resend.dev>",
     to,
-    subject: "Your Delivery OTP",
+    subject:sub,
     html: `
       <h2>Delivery OTP</h2>
       <p>Your OTP is:</p>
@@ -16,11 +16,11 @@ export const sendDeliveryEmail = async ({ to, otp }) => {
   });
 };
 
-export const sendOtpEmail = async ({ to, otp }) => {
+export const sendOtpEmail = async ({ to, otp,sub }) => {
   return resend.emails.send({
     from: "Zwiggy <onboarding@resend.dev>",
     to,
-    subject: "Password Reset OTP",
+    subject:sub,
     html: `
       <h2>Password Reset</h2>
       <h1>${otp}</h1>
