@@ -1,5 +1,5 @@
 import React, { use } from 'react'
-export const serverUrl="http://localhost:8000"
+export const serverUrl="https://zwiggy-backend-tqab.onrender.com"
 import {Routes,Route,Navigate} from 'react-router-dom'
 import SignUp from './pages/SignUp'
 import SignIn from './pages/SignIn'
