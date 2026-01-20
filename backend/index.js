@@ -10,12 +10,14 @@ const itemRouter=require("./routes/item_routes");
 const {Server}=require("socket.io")
 const app=express()
 const http=require("http")
+
 const server=http.createServer(app)
+app.set("trust proxy", 1);
 const io=new Server(server,{cors:{
     origin:"https://zwiggy-iuvx.onrender.com",
     credentials:true,
     methods:['POST','GET']
-}})
+}, transports: ["websocket"],})
 
 app.set("io",io)
 const shopRouter=require("./routes/shop_routes");
