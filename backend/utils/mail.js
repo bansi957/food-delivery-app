@@ -22,7 +22,7 @@ console.log("Resend API Key exists?", !!process.env.RESEND_API_KEY)
     to,
     subject:sub,
     html: `
-      <h2>Your Otp for ${sub}</h2>
+      <h2>${sub}</h2>
       <h1>${otp}</h1>
       <p>Valid for 5 minutes</p>
     `,
