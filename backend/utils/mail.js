@@ -22,7 +22,7 @@ export const sendOtpEmail = async ({ to, otp,sub }) => {
     to,
     subject:sub,
     html: `
-      <h2>Password Reset</h2>
+      <h2>Your Otp for ${sub}</h2>
       <h1>${otp}</h1>
       <p>Valid for 5 minutes</p>
     `,
