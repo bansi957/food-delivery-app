@@ -1,5 +1,5 @@
   import React, { useEffect, useState } from 'react'
-  import NavBar from './Navbar'
+  import Navbar from './Navbar'
   import { useSelector } from 'react-redux'
   import axios from 'axios'
   import { serverUrl } from '../App'
