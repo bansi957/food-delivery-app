@@ -1,5 +1,5 @@
 import React from "react";
-import NavBar from "./Navbar";
+import Navbar from "./Navbar";
 import {  useSelector } from "react-redux";
 import { FaUtensils } from "react-icons/fa6";
 import { useNavigate } from "react-router-dom";
@@ -13,7 +13,7 @@ function OwnerDashBoard() {
 
   return (
     <>
-      <NavBar />
+      <Navbar />
       {!myShopData ? (
         <div className="flex justify-center item-center p-4 sm:p-6">
           <div className="w-full max-w-md bg-white shadow-lg rounded-2xl p-6 border border-gray-100 hover:shadow-2xl transition-shadow duration-300">
