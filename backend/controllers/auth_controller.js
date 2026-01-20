@@ -30,8 +30,8 @@ const sendOtp = async (req, res) => {
     res.cookie("otpToken", otpToken, {
       httpOnly: true,
       maxAge: 5 * 60 * 1000,
-      sameSite: "strict",
-      secure: false, // true in production
+      sameSite: "none",
+      secure: true, // true in production
     });
 
     return res.status(200).json({ message: "OTP sent successfully" });
@@ -88,8 +88,8 @@ const signUp=async(req,res)=>{
         res.clearCookie("otpToken")
         const token=await jwtToken(user._id)
         res.cookie("token",token,{
-            secure:false,
-            sameSite:"strict",
+            secure:true,
+            sameSite:"none",
             maxAge:7*24*60*60*1000,
             httpOnly:true
         })
@@ -124,8 +124,8 @@ const signIn=async(req,res)=>{
        
         const token=await jwtToken(user._id)
         res.cookie("token",token,{
-            secure:false,
-            sameSite:"strict",
+            secure:true,
+            sameSite:"none",
             maxAge:7*24*60*60*1000,
             httpOnly:true
         })
@@ -246,8 +246,8 @@ const googleAuth=async (req,res)=>{
 
          const token=await jwtToken(user._id)
         res.cookie("token",token,{
-            secure:false,
-            sameSite:"strict",
+            secure:true,
+            sameSite:"none",
             maxAge:7*24*60*60*1000,
             httpOnly:true
         })
