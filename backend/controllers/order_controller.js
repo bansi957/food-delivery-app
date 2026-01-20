@@ -528,40 +528,6 @@ const sendDeliveryOtp=async (req,res)=>{
   }
 }
 
-// const verifyDeliveryOtp=async (req,res)=>{
-//   try {
-//     const {orderId,shopOrderId,otp}=req.body
-//      const order=await Order.findById(orderId).populate("user")
-//     const shopOrder=order.shopOrders.id(shopOrderId)
-//      if(!order || !shopOrder){
-//       return res.status(400).json({message:"order or shopOrder not found"})
-//     }
-//     if(shopOrder.deliveryOtp!==otp || shopOrder.otpExpires<Date.now()){
-//       return res.status(400).json({message:"invalid/Expired OTP"})
-//     }
-//     shopOrder.status="delivered"
-//     shopOrder.deliveredAt=Date.now()
-//     shopOrder.deliveryOtp=null
-//     shopOrder.otpExpires=null
-//     await order.save()
-//     const ass=await deliveryAssignmentModel.findOne({shopOrderId,
-//       order:orderId})
-//     await deliveryAssignmentModel.deleteOne({shopOrderId,
-//       order:orderId
-//     })
-
-//     return res.status(200).json({message:"order delivered successfully",
-//       assignmentId:ass._id
-//     })
-//   } catch (error) {
-//      return res.status(500).json({
-//       message:` delivery otp verification error ${error}`
-//     })
-//   }
-// }
-
-
-
 const verifyDeliveryOtp = async (req, res) => {
   try {
     const { orderId, shopOrderId, otp } = req.body;
@@ -676,57 +642,5 @@ const getTodayDeliveries = async (req, res) => {
   }
 };
 
-// const getTodayDeliveries = async (req, res) => {
-//   try {
-//     const dId = new mongoose.Types.ObjectId(req.userId);
-
-//     const startOfDay = new Date();
-//     startOfDay.setHours(0, 0, 0, 0);
-
-//     const orders = await Order.find({
-//       shopOrders: {
-//         $elemMatch: {
-//           assignedDeliveryBoy: dId,
-//           status: "delivered",
-//           deliveredAt: { $gte: startOfDay }
-//         }
-//       }
-//     }).lean();
-
-//     const todaysDeliveries = [];
-
-//     orders.forEach(order => {
-//       order.shopOrders.forEach(shopOrder => {
-//         if (
-//           shopOrder.status === "delivered" &&
-//           shopOrder.deliveredAt &&
-//           shopOrder.deliveredAt >= startOfDay &&
-//           shopOrder.assignedDeliveryBoy?.toString() === dId.toString()
-//         ) {
-//           todaysDeliveries.push(shopOrder);
-//         }
-//       });
-//     });
-
-//     const stats = {};
-//     todaysDeliveries.forEach(order => {
-//       const hour = new Date(order.deliveredAt).getHours();
-//       stats[hour] = (stats[hour] || 0) + 1;
-//     });
-
-//     const formattedStats = Object.entries(stats)
-//       .map(([hour, count]) => ({
-//         hour: Number(hour),
-//         count
-//       }))
-//       .sort((a, b) => a.hour - b.hour);
-
-//     return res.status(200).json(formattedStats);
-//   } catch (error) {
-//     return res.status(500).json({
-//       message: `get today deliveries error ${error.message}`
-//     });
-//   }
-// };
 
 module.exports = {getTodayDeliveries,verifyPayment,sendDeliveryOtp,verifyDeliveryOtp,getOrderById,getCurrentOrder,acceptedOrder,placeOrder,getUserOrders,updateOrderstatus,getDeliveryBoyAssignment};
