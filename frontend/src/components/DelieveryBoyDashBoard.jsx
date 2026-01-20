@@ -56,7 +56,7 @@ import { Bar, BarChart, CartesianGrid, Legend, ResponsiveContainer, Tooltip, XAx
     const handleSendOtp=async ()=>{
       setLoading(true)
       setMessage("")
-      
+      setOtp("")
       try {
         const result=await axios.post(`${serverUrl}/api/order/send-delivery-otp`,{orderId:currentOrder._id,shopOrderId:currentOrder.shopOrder._id},{withCredentials:true})
         
@@ -73,7 +73,7 @@ import { Bar, BarChart, CartesianGrid, Legend, ResponsiveContainer, Tooltip, XAx
     const handleVerifyOtp=async ()=>{
       setLoading(true)
       setMessage("")
-      setOtp("")
+      
       try {
         const result=await axios.post(`${serverUrl}/api/order/verify-delivery-otp`,{orderId:currentOrder._id,shopOrderId:currentOrder.shopOrder._id,otp},{withCredentials:true})
         setMessage(result.data.message)
