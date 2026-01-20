@@ -1,6 +1,7 @@
 import { Resend } from "resend";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
+console.log("Resend API Key exists?", !!process.env.RESEND_API_KEY)
 
 export const sendDeliveryEmail = async ({ to, otp,sub }) => {
   return resend.emails.send({
