@@ -1,9 +1,9 @@
-import { Resend } from "resend";
+const Resend=require("resend")
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 console.log("Resend API Key exists?", !!process.env.RESEND_API_KEY)
 
-export const sendDeliveryEmail = async ({ to, otp,sub }) => {
+ const sendDeliveryEmail = async ({ to, otp,sub }) => {
   return resend.emails.send({
     from: "Zwiggy <onboarding@resend.dev>",
     to,
@@ -16,8 +16,7 @@ export const sendDeliveryEmail = async ({ to, otp,sub }) => {
     `,
   });
 };
-
-export const sendOtpEmail = async ({ to, otp,sub }) => {
+ const sendOtpEmail = async ({ to, otp,sub }) => {
   return resend.emails.send({
     from: "Zwiggy <onboarding@resend.dev>",
     to,
@@ -30,3 +29,4 @@ export const sendOtpEmail = async ({ to, otp,sub }) => {
   });
 };
 
+module.exports={sendOtpEmail,sendDeliveryEmail}
