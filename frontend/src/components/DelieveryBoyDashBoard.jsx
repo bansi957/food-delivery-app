@@ -145,7 +145,7 @@ import { Bar, BarChart, CartesianGrid, Legend, ResponsiveContainer, Tooltip, XAx
 
     return (
       <div className=' w-screen  min-h-screen flex flex-col gap-5 items-center bg-[#fff9f6] overflow-y-auto'>
-        <NavBar/>
+        <Navbar/>
         <div className='w-full max-w-200 flex flex-col gap-5 items-center'>
           <div className=' text-center bg-white rounded-2xl  shadow-md p-5 flex flex-col justify-start items-center w-[90%] border border-orange-100 gap-2'>
             <h1 className='text-[#ff4d2d] text-xl font-bold'>Welcome, {userData.user.fullName}</h1>
