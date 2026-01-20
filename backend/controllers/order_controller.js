@@ -618,9 +618,13 @@ const getTodayDeliveries = async (req, res) => {
   try {
     const dId = new mongoose.Types.ObjectId(req.userId);
 
-    // ✅ IST start of day (UTC equivalent)
-    const startOfDay = new Date();
-    startOfDay.setUTCHours(18, 30, 0, 0);
+    // ✅ Proper IST midnight calculation
+    const now = new Date();
+    const istNow = new Date(
+      now.toLocaleString("en-US", { timeZone: "Asia/Kolkata" })
+    );
+    istNow.setHours(0, 0, 0, 0);
+    const startOfDay = new Date(istNow.getTime());
 
     const orders = await Order.find({
       shopOrders: {
@@ -632,34 +636,28 @@ const getTodayDeliveries = async (req, res) => {
       }
     }).lean();
 
-    const todaysDeliveries = [];
+    const stats = {};
 
     orders.forEach(order => {
       order.shopOrders.forEach(shopOrder => {
         if (
           shopOrder.status === "delivered" &&
           shopOrder.deliveredAt &&
-          shopOrder.deliveredAt >= startOfDay &&
-          shopOrder.assignedDeliveryBoy?.toString() === dId.toString()
+          shopOrder.assignedDeliveryBoy?.toString() === dId.toString() &&
+          shopOrder.deliveredAt >= startOfDay
         ) {
-          todaysDeliveries.push(shopOrder);
+          // ✅ IST hour
+          const hour = Number(
+            new Date(shopOrder.deliveredAt).toLocaleString("en-IN", {
+              timeZone: "Asia/Kolkata",
+              hour: "2-digit",
+              hour12: false
+            })
+          );
+
+          stats[hour] = (stats[hour] || 0) + 1;
         }
       });
-    });
-
-    // ✅ Hour-wise delivery count in IST
-    const stats = {};
-
-    todaysDeliveries.forEach(order => {
-      const hour = Number(
-        new Date(order.deliveredAt).toLocaleString("en-IN", {
-          timeZone: "Asia/Kolkata",
-          hour: "2-digit",
-          hour12: false
-        })
-      );
-
-      stats[hour] = (stats[hour] || 0) + 1;
     });
 
     const formattedStats = Object.entries(stats)
