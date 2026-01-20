@@ -5,42 +5,87 @@ const  jwtToken=require("../utils/token")
 const jwt =require("jsonwebtoken")
 const {sendOtpEmail} = require("../utils/mail")
 
-const sendOtp = async (req, res) => {
+// const sendOtp = async (req, res) => {
+//   try {
+//     const { email } = req.body;
+
+//     if (!email) {
+//       return res.status(400).json({ message: "Email is required" });
+//     }
+
+//     const otp = Math.floor(100000 + Math.random() * 900000).toString();
+
+//     const otpToken = jwt.sign(
+//       { email, otp },
+//       process.env.JWT_SECRET,
+//       { expiresIn: "5m" }
+//     );
+
+//     await sendOtpEmail({
+//       to: email,
+//       sub: "Your Signup OTP",
+//       otp
+//     });
+
+//     res.cookie("otpToken", otpToken, {
+//       httpOnly: true,
+//       maxAge: 5 * 60 * 1000,
+//       sameSite: "none",
+//       secure: true, // true in production
+//     });
+
+//     return res.status(200).json({ message: "OTP sent successfully" });
+//   } catch (err) {
+//     console.error("OTP ERROR:", err);
+//     return res.status(500).json({ message: "OTP send failed" });
+//   }
+// };
+
+
+const sendotp = async (req, res) => {
   try {
     const { email } = req.body;
+    if (!email) return res.status(400).json({ message: "Email is required" });
 
-    if (!email) {
-      return res.status(400).json({ message: "Email is required" });
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(400).json({ message: "User not found" });
     }
 
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    user.resetOtp = otp;
+    user.otpExpires = Date.now() + 5 * 60 * 1000; // 5 minutes
+    user.isOtpVerified = false;
+    await user.save();
 
-    const otpToken = jwt.sign(
-      { email, otp },
-      process.env.JWT_SECRET,
-      { expiresIn: "5m" }
-    );
+    if (!process.env.RESEND_API_KEY) {
+      console.error("RESEND_API_KEY missing in production!");
+      return res.status(500).json({ message: "Email service not configured" });
+    }
 
-    await sendOtpEmail({
-      to: email,
-      sub: "Your Signup OTP",
-      otp
-    });
-
-    res.cookie("otpToken", otpToken, {
-      httpOnly: true,
-      maxAge: 5 * 60 * 1000,
-      sameSite: "none",
-      secure: true, // true in production
-    });
+    try {
+      await sendOtpEmail({
+        to: email,
+        otp,
+        sub: "Your OTP for password reset",
+      });
+    } catch (err) {
+      console.error("Failed to send OTP email:", err);
+      return res.status(500).json({
+        message: "Failed to send OTP email",
+        error: err.message,
+      });
+    }
 
     return res.status(200).json({ message: "OTP sent successfully" });
   } catch (err) {
-    console.error("OTP ERROR:", err);
-    return res.status(500).json({ message: "OTP send failed" });
+    console.error("sendotp ERROR:", err);
+    return res.status(500).json({
+      message: "Internal server error while sending OTP",
+      error: err.message,
+    });
   }
 };
-
 
 const signUp=async(req,res)=>{
     try {
