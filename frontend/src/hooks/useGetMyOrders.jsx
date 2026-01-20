@@ -21,6 +21,6 @@ function useGetMyOrders() {
     }
 
     fetchOrders()
-  },[userData])
+  },[userData?.user?._id])
 }
 export default useGetMyOrders
