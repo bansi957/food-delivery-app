@@ -2,6 +2,8 @@ const nodemailer=require("nodemailer")
 
 const transport=nodemailer.createTransport({
 service:"Gmail",
+    port: 587,
+  secure: false,
   auth: {
     user: process.env.MAIL_ID,
     pass: process.env.MAIL_PASS,}
