@@ -13,7 +13,7 @@ import { useNavigate } from "react-router-dom";
 import { setSearchItems, setUserData } from "../redux/UserSlice";
 import {TbReceipt2} from "react-icons/tb";
 import { useEffect } from "react";
-function NavBar() {
+function Navbar() {
   const [query,setQuery]=useState("")
   const { city,myorders} = useSelector((state) => state.user);
   const {myShopData}=useSelector((state)=>state.owner)
@@ -236,4 +236,4 @@ useEffect(() => {
   );
 }
 
-export default NavBar;
+export default Navbar;
