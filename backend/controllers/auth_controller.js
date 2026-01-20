@@ -5,41 +5,41 @@ const  jwtToken=require("../utils/token")
 const jwt =require("jsonwebtoken")
 const {sendOtpEmail} = require("../utils/mail")
 
-const sendOtp = async (req, res) => {
-  try {
-    const { email } = req.body;
+// const sendOtp = async (req, res) => {
+//   try {
+//     const { email } = req.body;
 
-    if (!email) {
-      return res.status(400).json({ message: "Email is required" });
-    }
+//     if (!email) {
+//       return res.status(400).json({ message: "Email is required" });
+//     }
 
-    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+//     const otp = Math.floor(100000 + Math.random() * 900000).toString();
 
-    const otpToken = jwt.sign(
-      { email, otp },
-      process.env.JWT_SECRET,
-      { expiresIn: "5m" }
-    );
+//     const otpToken = jwt.sign(
+//       { email, otp },
+//       process.env.JWT_SECRET,
+//       { expiresIn: "5m" }
+//     );
 
-    await sendOtpEmail({
-      to: email,
-      sub: "Your Signup OTP",
-      otp
-    });
+//     await sendOtpEmail({
+//       to: email,
+//       sub: "Your Signup OTP",
+//       otp
+//     });
 
-    res.cookie("otpToken", otpToken, {
-      httpOnly: true,
-      maxAge: 5 * 60 * 1000,
-      sameSite: "none",
-      secure: true, // true in production
-    });
+//     res.cookie("otpToken", otpToken, {
+//       httpOnly: true,
+//       maxAge: 5 * 60 * 1000,
+//       sameSite: "none",
+//       secure: true, // true in production
+//     });
 
-    return res.status(200).json({ message: "OTP sent successfully" });
-  } catch (err) {
-    console.error("OTP ERROR:", err);
-    return res.status(500).json({ message: "OTP send failed" });
-  }
-};
+//     return res.status(200).json({ message: "OTP sent successfully" });
+//   } catch (err) {
+//     console.error("OTP ERROR:", err);
+//     return res.status(500).json({ message: "OTP send failed" });
+//   }
+// };
 
 
 const signUp=async(req,res)=>{
@@ -52,17 +52,7 @@ const signUp=async(req,res)=>{
                 message:"this user is already exist please try with another email"
             })
         }
-         const otpToken = req.cookies.otpToken;
-    if (!otpToken) {
-      return res.status(400).json({ message: "OTP expired" });
-    }
-
-    const decoded = jwt.verify(otpToken, process.env.JWT_SECRET);
-
-    if (decoded.email !== email || decoded.otp !== otp) {
-      return res.status(400).json({ message: "Invalid OTP" });
-    }
-
+  
         
         if(password.length<6){
             return res.status(400).json({
@@ -85,7 +75,6 @@ const signUp=async(req,res)=>{
             mobile,
             role
         })
-        res.clearCookie("otpToken")
         const token=await jwtToken(user._id)
         res.cookie("token",token,{
             secure:true,
