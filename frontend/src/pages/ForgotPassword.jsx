@@ -21,6 +21,7 @@ function ForgotPassword() {
         setError("")
         setStep(2)
       } catch (error) {
+          console.log(error)
         setError(error.response.data.message)
       }
       finally {
