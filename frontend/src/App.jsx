@@ -3,7 +3,7 @@ export const serverUrl="https://zwiggy-backend-tqab.onrender.com"
 import {Routes,Route,Navigate} from 'react-router-dom'
 import SignUp from './pages/SignUp'
 import SignIn from './pages/SignIn'
-import ForgotPassword from './pages/forgotPassword'
+import ForgotPassword from './pages/ForgotPassword'
 import useGetCurrentuser from './hooks/useGetCurrentuser'
 import { useDispatch, useSelector } from 'react-redux'
 import useGetCity from './hooks/useGetCity'
