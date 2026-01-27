@@ -34,14 +34,14 @@ function Navbar() {
       console.log(error);
     }
   };
-  //   const handleSearchItems=async ()=>{
-  //      try {
-  //       const result=await axios.get(`${serverUrl}/api/item/search-items?query=${query}&city=srikakulam`,{withCredentials:true})
-  //       dispatch(setSearchItems(result.data))
-  //      } catch (error) {
-  //       console.log(error)
-  //      }
-  //   }  
+    const handleSearchItems=async ()=>{
+       try {
+        const result=await axios.get(`${serverUrl}/api/item/search-items?query=${query}&city=srikakulam`,{withCredentials:true})
+        dispatch(setSearchItems(result.data))
+       } catch (error) {
+        console.log(error)
+       }
+    }  
   //   useEffect(()=>{
   //     const trimmedquery=(query||"").trim()
   //     if(query && trimmedquery.length>=2){
