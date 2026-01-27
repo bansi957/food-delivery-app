@@ -42,28 +42,28 @@ function Navbar() {
         console.log(error)
        }
     }  
-  //   useEffect(()=>{
-  //     const trimmedquery=(query||"").trim()
-  //     if(query && trimmedquery.length>0){
-  //       handleSearchItems()
-  //     }
-  //     else{
-  //       dispatch(setSearchItems(null))
-  //     }
-  // },[query])
-    useEffect(() => {
-  const trimmedQuery = (query || "").trim();
+    useEffect(()=>{
+      const trimmedquery=(query||"").trim()
+      if(query && trimmedquery.length>0){
+        handleSearchItems()
+      }
+      else{
+        dispatch(setSearchItems(null))
+      }
+  },[query])
+//     useEffect(() => {
+//   const trimmedQuery = (query || "").trim();
 
-  const timer = setTimeout(() => {
-    if (trimmedQuery.length > 0) {
-      handleSearchItems(trimmedQuery);
-    } else {
-      dispatch(setSearchItems(null));
-    }
-  }, 300); // 👈 debounce delay (300ms)
+//   const timer = setTimeout(() => {
+//     if (trimmedQuery.length > 0) {
+//       handleSearchItems(trimmedQuery);
+//     } else {
+//       dispatch(setSearchItems(null));
+//     }
+//   }, 300); // 👈 debounce delay (300ms)
 
-  return () => clearTimeout(timer);
-}, [query]);
+//   return () => clearTimeout(timer);
+// }, [query]);
 
 const [count,setCount]=useState(0)
 useEffect(()=>{
