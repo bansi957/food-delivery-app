@@ -9,11 +9,11 @@ function useGetShopByCity() {
     const {city,userData}=useSelector(state=>state.user)
 
   useEffect(()=>{
-    if(!city) return;
+
     const fetCity=async ()=>{
     
         try {
-            const result=await axios.get(`${serverUrl}/api/shop/get-by-city/${city}`,{withCredentials:true})
+            const result=await axios.get(`${serverUrl}/api/shop/get-by-city/srikakulam`,{withCredentials:true})
             if(!result){
               return NULL
             }
