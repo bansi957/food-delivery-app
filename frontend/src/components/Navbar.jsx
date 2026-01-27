@@ -55,7 +55,7 @@ useEffect(() => {
   const trimmedQuery = (query || "").trim();
 
   const timer = setTimeout(() => {
-    if (trimmedQuery.length > 0) {
+    if (trimmedQuery.length >=2) {
       handleSearchItems();
     } else {
       dispatch(setSearchItems(null));
