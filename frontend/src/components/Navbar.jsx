@@ -36,7 +36,7 @@ function Navbar() {
   };
     const handleSearchItems=async ()=>{
        try {
-        const result=await axios.get(`${serverUrl}/api/item/search-items?query=${query}&city=Addanki`,{withCredentials:true})
+        const result=await axios.get(`${serverUrl}/api/item/search-items?query=${query}&city=srikakulam`,{withCredentials:true})
         dispatch(setSearchItems(result.data))
        } catch (error) {
         console.log(error)
@@ -44,7 +44,7 @@ function Navbar() {
     }  
     useEffect(()=>{
       const trimmedquery=(query||"").trim()
-      if(query && trimmedquery.length>0){
+      if(query && trimmedquery.length>=2){
         handleSearchItems()
       }
       else{
