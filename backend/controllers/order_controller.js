@@ -13,27 +13,147 @@ let instance=new Razorpay({
   key_secret:process.env.RAZORPAY_KEY_SECRET,
 })
 
+// const placeOrder = async (req, res) => {
+//   try {
+//     const { cartItems, paymentMethod, deliveryAddress, totalAmount } = req.body;
+//     if (cartItems.length == 0 || !cartItems) {
+//       return res.status(400).json({
+//         message: "cart is empty",
+//       });
+//     }
+//     if (
+//       !deliveryAddress.text ||
+//       !deliveryAddress.latitude ||
+//       !deliveryAddress.longitude
+//     ) {
+//       return res.status(400).json({
+//         message: "send Complete delivery address",
+//       });
+//     }
+
+//     const groupItemsByShop = {};
+//     cartItems.forEach((item) => {
+//       const shopId = item.shop;
+//       if (!groupItemsByShop[shopId]) {
+//         groupItemsByShop[shopId] = [];
+//       }
+//       groupItemsByShop[shopId].push(item);
+//     });
+
+//     const shopOrders = await Promise.all(
+//       Object.keys(groupItemsByShop).map(async (shopId) => {
+//         const shop = await Shop.findById(shopId).populate("owner");
+//         if (!shop) {
+//           return res.status(400).json({
+//             message: "Shop not found",
+//           });
+//         }
+//         const items = groupItemsByShop[shopId];
+//         const subTotal = items.reduce(
+//           (sum, i) => sum + Number(i.price) * Number(i.quantity),
+//           0
+//         );
+//         return {
+//           shop: shop._id,
+//           owner: shop.owner._id,
+//           subTotal,
+//           shopOrderItems: items.map((i) => ({
+//             item: i.id,
+//             name: i.name,
+//             price: i.price,
+//             quantity: i.quantity,
+//           })),
+//         };
+//       })
+//     );
+//     if(paymentMethod=="online"){
+//        const razorOrder=await instance.orders.create({
+//         amount:Math.round(totalAmount*100),
+//         currency:"INR",
+//         receipt:`receipt_${Date.now()}`
+//       })
+//       const newOrder = await Order.create({
+//       user: req.userId,
+//       paymentMethod,
+//       deliveryAddress,
+//       totalAmount,
+//       shopOrders,
+//       razorPayOrderId:razorOrder.id,
+//       payment:false
+//     })
+
+    
+//     return res.status(200).json({razorOrder,orderId:newOrder._id})
+//     }
+  
+//     const newOrder = await Order.create({
+//       user: req.userId,
+//       paymentMethod,
+//       deliveryAddress,
+//       totalAmount,
+//       shopOrders,
+//     })
+  
+
+//     const populatedOrder = await Order.findById(newOrder._id)
+//       .populate("user")
+//       .populate("shopOrders.shop", "name")
+//       .populate("shopOrders.owner", "name socketId")
+//       .populate("shopOrders.shopOrderItems.item", "image");
+//     const io=req.app.get('io')
+//     if(io){
+//       populatedOrder.shopOrders.forEach(shopOrder=>{
+//         const ownerSocketId=shopOrder.owner.socketId
+//         if(ownerSocketId){
+//           io.to(ownerSocketId).emit("newOrder",{
+//         _id:populatedOrder._id,
+//         deliveryAddress:populatedOrder.deliveryAddress,
+//         paymentMethod:populatedOrder.paymentMethod,
+//         user:populatedOrder.user,
+//         shopOrders:shopOrder,
+//         createdAt:populatedOrder.createdAt,
+//         payment:populatedOrder.payment
+//       })
+//         }
+//       })
+//     }
+
+//     return res.status(200).json(populatedOrder);
+//   } catch (error) {
+//     return res.status(500).json({ message: `place order error ${error}` });
+//   }
+// };
 const placeOrder = async (req, res) => {
   try {
     const { cartItems, paymentMethod, deliveryAddress, totalAmount } = req.body;
-    if (cartItems.length == 0 || !cartItems) {
-      return res.status(400).json({
-        message: "cart is empty",
-      });
+
+    if (!cartItems || cartItems.length === 0) {
+      return res.status(400).json({ message: "cart is empty" });
     }
+
     if (
-      !deliveryAddress.text ||
-      !deliveryAddress.latitude ||
-      !deliveryAddress.longitude
+      !deliveryAddress?.text ||
+      !deliveryAddress?.latitude ||
+      !deliveryAddress?.longitude
     ) {
       return res.status(400).json({
-        message: "send Complete delivery address",
+        message: "send complete delivery address",
       });
     }
 
+    // ✅ NORMALIZE SHOP ID
+    cartItems.forEach(item => {
+      if (typeof item.shop === "object" && item.shop !== null) {
+        item.shop = item.shop._id;
+      }
+      if (!mongoose.Types.ObjectId.isValid(item.shop)) {
+        throw new Error("Invalid shop id in cart");
+      }
+    });
+
     const groupItemsByShop = {};
-    cartItems.forEach((item) => {
-      const shopId = item.shop;
+    cartItems.forEach(item => {
+      const shopId = item.shop.toString();
       if (!groupItemsByShop[shopId]) {
         groupItemsByShop[shopId] = [];
       }
@@ -41,23 +161,23 @@ const placeOrder = async (req, res) => {
     });
 
     const shopOrders = await Promise.all(
-      Object.keys(groupItemsByShop).map(async (shopId) => {
+      Object.keys(groupItemsByShop).map(async shopId => {
         const shop = await Shop.findById(shopId).populate("owner");
         if (!shop) {
-          return res.status(400).json({
-            message: "Shop not found",
-          });
+          throw new Error("Shop not found");
         }
+
         const items = groupItemsByShop[shopId];
         const subTotal = items.reduce(
           (sum, i) => sum + Number(i.price) * Number(i.quantity),
           0
         );
+
         return {
           shop: shop._id,
           owner: shop.owner._id,
           subTotal,
-          shopOrderItems: items.map((i) => ({
+          shopOrderItems: items.map(i => ({
             item: i.id,
             name: i.name,
             price: i.price,
@@ -66,63 +186,6 @@ const placeOrder = async (req, res) => {
         };
       })
     );
-    if(paymentMethod=="online"){
-       const razorOrder=await instance.orders.create({
-        amount:Math.round(totalAmount*100),
-        currency:"INR",
-        receipt:`receipt_${Date.now()}`
-      })
-      const newOrder = await Order.create({
-      user: req.userId,
-      paymentMethod,
-      deliveryAddress,
-      totalAmount,
-      shopOrders,
-      razorPayOrderId:razorOrder.id,
-      payment:false
-    })
-
-    
-    return res.status(200).json({razorOrder,orderId:newOrder._id})
-    }
-  
-    const newOrder = await Order.create({
-      user: req.userId,
-      paymentMethod,
-      deliveryAddress,
-      totalAmount,
-      shopOrders,
-    })
-  
-
-    const populatedOrder = await Order.findById(newOrder._id)
-      .populate("user")
-      .populate("shopOrders.shop", "name")
-      .populate("shopOrders.owner", "name socketId")
-      .populate("shopOrders.shopOrderItems.item", "image");
-    const io=req.app.get('io')
-    if(io){
-      populatedOrder.shopOrders.forEach(shopOrder=>{
-        const ownerSocketId=shopOrder.owner.socketId
-        if(ownerSocketId){
-          io.to(ownerSocketId).emit("newOrder",{
-        _id:populatedOrder._id,
-        deliveryAddress:populatedOrder.deliveryAddress,
-        paymentMethod:populatedOrder.paymentMethod,
-        user:populatedOrder.user,
-        shopOrders:shopOrder,
-        createdAt:populatedOrder.createdAt,
-        payment:populatedOrder.payment
-      })
-        }
-      })
-    }
-
-    return res.status(200).json(populatedOrder);
-  } catch (error) {
-    return res.status(500).json({ message: `place order error ${error}` });
-  }
-};
 
 const verifyPayment=async (req,res)=>{
   try {
