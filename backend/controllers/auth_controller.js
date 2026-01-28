@@ -245,36 +245,82 @@ const resetPassword=async (req,res)=>{
    }
 }
 
-const googleAuth=async (req,res)=>{
-    try {
-        const {fullName,email,mobile,role}=req.body
-        let user=await User.findOne({email})
-        if(!user){
-            user=await User.create({
-                fullName,
-                email,
-                role,
-                mobile
-            })
-        }
+const googleSignup = async (req, res) => {
+  try {
+    const { fullName, email, mobile, role } = req.body;
 
-         const token=await jwtToken(user._id)
-        res.cookie("token",token,{
-            secure:true,
-            sameSite:"none",
-            maxAge:7*24*60*60*1000,
-            httpOnly:true
-        })
-  return  res.status(200).json({
-                message:"successfully SignUp ",
-                user
-            })
-
-    } catch (error) {
-         console.log(error)
-        res.status(500).json({
-            message:"something went wrong"
-        })
+    // Check existing user
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res.status(409).json({
+        message: "User already exists. Please login instead."
+      });
     }
-}
-module.exports={signUp,signIn,signOut,sendotp,verifyOtp,resetPassword,googleAuth}
+
+    // Create new user
+    const user = await User.create({
+      fullName,
+      email,
+      mobile,
+      role,
+      authProvider: "google"
+    });
+
+    const token = await jwtToken(user._id);
+
+    res.cookie("token", token, {
+      secure: true,
+      sameSite: "none",
+      httpOnly: true,
+      maxAge: 7 * 24 * 60 * 60 * 1000
+    });
+
+    return res.status(201).json({
+      message: "Signup successful",
+      user
+    });
+
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({
+      message: "Something went wrong"
+    });
+  }
+};
+
+
+const googleLogin = async (req, res) => {
+  try {
+    const { email } = req.body;
+
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      return res.status(404).json({
+        message: "User not found. Please signup first."
+      });
+    }
+
+    const token = await jwtToken(user._id);
+
+    res.cookie("token", token, {
+      secure: true,
+      sameSite: "none",
+      httpOnly: true,
+      maxAge: 7 * 24 * 60 * 60 * 1000
+    });
+
+    return res.status(200).json({
+      message: "Login successful",
+      user
+    });
+
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({
+      message: "Something went wrong"
+    });
+  }
+};
+
+module.exports={signUp,signIn,signOut,sendotp,verifyOtp,resetPassword,googleSignup,googleLogin}
