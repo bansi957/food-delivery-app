@@ -38,7 +38,7 @@ function SignIn() {
 
 
       try {
-      const result2=await axios.post(`${serverUrl}/api/auth/googleAuth`,{  
+      const result2=await axios.post(`${serverUrl}/api/auth/googleAuth-signin`,{  
         email:result.user.email,
       },{withCredentials:true })
       dispatch(setUserData(result2.data))
@@ -173,7 +173,7 @@ function SignIn() {
     alt="google"
     className="w-5 h-5"
   />
-  Sign up with Google
+  Sign in with Google
 </button>
           {/* Footer */}
           <p className="text-center text-sm mt-6">
