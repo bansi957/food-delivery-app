@@ -262,8 +262,7 @@ const googleSignup = async (req, res) => {
       fullName,
       email,
       mobile,
-      role,
-      authProvider: "google"
+      role
     });
 
     const token = await jwtToken(user._id);
