@@ -253,7 +253,7 @@ const googleSignup = async (req, res) => {
     const existingUser = await User.findOne({ email });
     if (existingUser) {
       return res.status(409).json({
-        message: "User already exists. Please login instead."
+        message: "User already exists. Please SignIn instead."
       });
     }
 
